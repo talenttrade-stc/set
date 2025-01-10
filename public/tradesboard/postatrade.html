@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Your Skill</title>
+    <style>
+         body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+              radial-gradient(circle at top right, #4b0082, transparent 60%),
+              #000033;
+            color: white;
+        }
+
+        /* Header Section */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            width: 150px; /* Adjust the size of the logo */
+            height: auto; /* Keep aspect ratio */
+            border-radius: 10px; /* Optional: adds rounded corners to the image */
+            transition: transform 0.3s ease-in-out; /* Adds smooth hover effect */
+            padding: 20px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #090a1a;
+        }
+
+        .search-container input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .login-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: white;
+            color: #090a1a;
+            cursor: pointer;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #000033;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+    </style>
+</head>
+<body>
+ <!-- Header Section -->
+ <header>
+    <div class="logo">
+
+        <img src="/images/logo.png" alt="Logo" class="logo">
+
+    </div>
+
+</header>
+
+    <div class="form-container">
+        <h2>Post Your Skill</h2>
+        <form id="skillForm">
+            <!-- Skill Name -->
+            <div class="form-group">
+                <label for="skillName">Skill Name</label>
+                <input type="text" id="skillName" name="skillName" placeholder="e.g., Graphic Design" required>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">Skill Description</label>
+                <textarea id="description" name="description" rows="5" placeholder="Provide a brief description of your skill..." required></textarea>
+            </div>
+
+            <!-- Experience Level -->
+            <div class="form-group">
+                <label for="experience">Experience Level</label>
+                <select id="experience" name="experience" required>
+                    <option value="" disabled selected>Select your experience level</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Expert">Expert</option>
+                </select>
+            </div>
+
+            <!-- Hourly Rate -->
+            <div class="form-group">
+                <label for="hourlyRate">Hourly Rate (₹)</label>
+                <input type="number" id="hourlyRate" name="hourlyRate" placeholder="e.g., 500" required>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-group">
+                <label for="contactEmail">Contact Email</label>
+                <input type="email" id="contactEmail" name="contactEmail" placeholder="e.g., yourname@example.com" required>
+            </div>
+
+            <!-- InstagramLinks -->
+            <div class="form-group">
+                <label for="socialMedia">instagram Link</label>
+                <textarea id="socialMedia" name="socialMedia" rows="3" placeholder="Provide links to your Instagram"></textarea>
+            </div>
+
+ <!-- Website Link -->
+ <div class="form-group">
+    <label for="socialMedia">Website</label>
+    <textarea id="socialMedia" name="socialMedia" rows="3" placeholder="Provide links to your Website"></textarea>
+</div>
+
+            <!-- UPI Payment ID -->
+            <div class="form-group">
+                <label for="upiID">UPI ID</label>
+                <input type="text" id="upiID" name="upiID" placeholder="e.g., yourname@upi">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">Post Skill</button>
+        </form>
+    </div>
+
+    <script>
+        const skillForm = document.getElementById('skillForm');
+
+        skillForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            // Capture form data
+            const formData = new FormData(skillForm);
+            const skillData = {
+                skillName: formData.get('skillName'),
+                description: formData.get('description'),
+                experience: formData.get('experience'),
+                hourlyRate: formData.get('hourlyRate'),
+                contactEmail: formData.get('contactEmail'),
+                socialMedia: formData.get('socialMedia'),
+                upiID: formData.get('upiID'),
+            };
+
+            // Display or send the form data
+            console.log('Skill Data Submitted:', skillData);
+            alert('Your skill has been posted successfully!');
+            skillForm.reset();
+        });
+    </script>
+</body>
+</html>

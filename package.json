@@ -1,0 +1,40 @@
+{
+<<<<<<< HEAD
+  "name": "talent_trade",
+  "version": "1.0.0",
+  "description": "Trade your talents",
+  "license": "ISC",
+  "author": "Talenttrade",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "firebase-admin": "^13.0.2",
+    "punycode": "^2.3.1",
+    "redis": "^4.7.0"
+  }
+=======
+  "name": "talent-share",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.0"
+  },
+  "description": ""
+>>>>>>> 5ae2782d1de6a72197224fc316765b544ebaf3fc
+}

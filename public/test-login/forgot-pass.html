@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password</title>
+ <style>
+    body {
+  font-family: Arial, sans-serif;
+  background: #1a1a1a;
+  color: #fff;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  text-align: center;
+}
+
+.forgot-password-box {
+  background: #2c2c2c;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  width: 300px;
+}
+
+h2 {
+  margin-bottom: 15px;
+  color: #f1f1f1;
+}
+
+p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #d1d1d1;
+}
+
+input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #6c63ff;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5a55d6;
+}
+
+.back-to-login {
+  display: block;
+  margin-top: 15px;
+  text-decoration: none;
+  color: #6c63ff;
+}
+
+.back-to-login:hover {
+  text-decoration: underline;
+}
+
+ </style>
+
+
+</head>
+<body>
+  <div class="container">
+    <div class="forgot-password-box">
+      <h2>Forgot Password</h2>
+      <p>Enter your email address, and we'll send you a link to reset your password.</p>
+      <form action="/send-reset-link" method="POST">
+        <input type="email" name="email" placeholder="Enter your email" required />
+        <button type="submit">Send Reset Link</button>
+      </form>
+      <a href="/login" class="back-to-login">Back to Login</a>
+    </div>
+  </div>
+</body>
+</html>
