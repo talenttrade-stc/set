@@ -132,3 +132,6 @@ This project is licensed under the MIT License - see `LICENSE` for details.
 </table>
 
 ---
+
+🛠 GitHub Tools
+<p align="center"> <a href="https://github.com/talenttrade-stc/set/issues/new/choose"> <img src="https://img.shields.io/badge/🚀_Submit_Issue-8A2BE2?style=for-the-badge" alt="Issues"> </a> <a href="https://github.com/talenttrade-stc/set/compare"> <img src="https://img.shields.io/badge/🔀_Open_PR-00D4FF?style=for-the-badge" alt="PRs"> </a> <a href="https://github.com/talenttrade-stc/set/actions"> <img src="https://img.shields.io/badge/⚙️_CI/CD-FF6EC7?style=for-the-badge" alt="Actions"> </a> </p>
