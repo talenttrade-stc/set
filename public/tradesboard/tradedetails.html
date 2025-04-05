@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade Details</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+              radial-gradient(circle at top right, #4b0082, transparent 60%),
+              #000033;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #e6e6f3;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            width: 150px; /* Adjust the size of the logo */
+            height: auto; /* Keep aspect ratio */
+            border-radius: 10px; /* Optional: adds rounded corners to the image */
+            transition: transform 0.3s ease-in-out; /* Adds smooth hover effect */
+            padding: 20px;
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4b0082;
+        }
+
+        .trade-detail {
+            margin-bottom: 15px;
+        }
+
+        .trade-label {
+            font-weight: bold;
+            color: #7f00ff;
+        }
+
+        .trade-value {
+            margin-left: 10px;
+            color: #000;
+        }
+
+        .back-button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 15px;
+            background-color: #7f00ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            width: 150px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background-color: #4b0082;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+    
+            <img src="/images/logo.png" alt="Logo" class="logo">
+    
+        </div>
+    
+    </header>
+    <div class="container">
+        <div class="header">Trade Details</div>
+
+        <div class="trade-detail">
+            <span class="trade-label">Trade Name:</span>
+            <span class="trade-value">Graphic Design</span>
+        </div>
+
+        <div class="trade-detail">
+            <span class="trade-label">Trade Description:</span>
+            <span class="trade-value">Provide a brief description of your skill...</span>
+        </div>
+
+        <div class="trade-detail">
+            <span class="trade-label">Experience Level:</span>
+            <span class="trade-value">Intermediate</span>
+        </div>
+
+        <div class="trade-detail">
+            <span class="trade-label">Hourly Rate (₹):</span>
+            <span class="trade-value">500</span>
+        </div>
+
+        <div class="trade-detail">
+            <span class="trade-label">Contact Number:</span>
+            <span class="trade-value">yourname@example.com</span>
+        </div>
+
+        <div class="trade-detail">
+            <span class="trade-label">Instagram Link:</span>
+            <span class="trade-value"><a href="https://instagram.com/yourprofile" target="_blank" style="color: #7f00ff;">https://instagram.com/yourprofile</a></span>
+        </div>
+
+        <div class="trade-detail">
+            <span class="trade-label">Website:</span>
+            <span class="trade-value"><a href="https://yourwebsite.com" target="_blank" style="color: #7f00ff;">https://yourwebsite.com</a></span>
+        </div>
+
+        <div class="trade-detail">
+            <span class="trade-label">UPI ID:</span>
+            <span class="trade-value">yourname@upi</span>
+        </div>
+        <a href="#" class="back-button" id="senddd" >Chat With User</a>
+        <a href="/mytrades" class="back-button">Go Back</a>
+    </div>
+
+
+
+
+    <script>
+
+        
+       
+        function sendWhatsAppMessage() {
+            console.log("Chatting...");
+            const phoneNumber = "9746222320"; // Replace with your desired number
+            const user = "User Name"; // Replace with dynamic user data if available
+            const skillName = "Graphic Design"; // Replace with dynamic skill data if available
+            const message = `hi ${user}, I need the skill ${skillName} from you. Can you give more details? /n Fron Talent Trade`;
+    
+            // Encode the message for use in a URL
+            const encodedMessage = encodeURIComponent(message);
+    
+            // Create the WhatsApp link
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+            // Redirect to WhatsApp
+            window.location.href = whatsappUrl;
+        }
+    </script>
+
+
+
+</body>
+</html>

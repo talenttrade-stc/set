@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Trade - Creative Skills</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+                        radial-gradient(circle at top right, #4b0082, transparent 60%),
+                        #000033;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
+
+        .logo-container {
+            padding: 20px;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 130px;
+            left: 50px;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Suggestions Section */
+        .suggestions {
+            max-width: 1200px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .suggestions h2 {
+            text-align: center;
+            color: #ffd700;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .suggestion-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px; /* Increased gap between cards */
+            justify-items: center;
+            padding: 20px; /* Added padding around the grid */
+        }
+
+        .suggestion-card {
+            background: rgba(42, 43, 74, 0.7);
+            padding: 25px; /* Increased card padding */
+            border-radius: 10px;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.3s, background 0.3s;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+            margin: 10px 0; /* Added vertical margin */
+        }
+
+        .suggestion-card:hover {
+            transform: scale(1.03);
+            background: rgba(58, 59, 90, 0.7);
+        }
+
+        .suggestion-card h3 {
+            color: #ffd700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            color: #ccc;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.5em;
+            max-height: 3em;
+            padding: 0 10px; /* Added padding to description */
+        }
+
+        .suggestion-card p {
+            color: #ccc;
+            margin: 10px 0; /* Increased margin between paragraphs */
+            font-size: 0.95rem;
+            padding: 0 5px; /* Added small padding to text */
+        }
+
+        .suggestion-card p:last-child {
+            color: #7f00ff;
+            font-weight: bold;
+            margin-top: 15px; /* Extra space above price */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="/images/logo.png" alt="Logo" class="logo">
+        </div>
+    </header>
+
+    <button onclick="history.back()" class="back-btn">← Back</button>
+
+    <!-- Suggestions Section -->
+    <section class="suggestions">
+        <h2>Creative Skills</h2>
+        <div class="suggestion-cards">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+    </section>
+
+    <script>
+        let userIdd = '';
+
+        async function checkSignedIn() {
+            try {
+                const response = await fetch('http://localhost:3001/check-signed-in', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (!response.ok) {
+                    throw new Error('User not signed in.');
+                }
+
+                const data = await response.json();
+                userIdd = data.user.uid;
+            } catch (error) {
+                console.log("User Not Signed In");
+                window.location.href = '/';
+            }
+        }
+
+        function fetchAndDisplayTrades() {
+            fetch('/get-trades')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch trades.');
+                    }
+                    return response.json();
+                })
+                .then(trades => {
+                    const filteredTrades = trades.filter(trade => trade.category === "Creative Skills");
+                    const suggestionsContainer = document.querySelector('.suggestion-cards');
+                    suggestionsContainer.innerHTML = '';
+
+                    filteredTrades.forEach(trade => {
+                        const card = document.createElement('div');
+                        card.className = 'suggestion-card';
+                        card.setAttribute('data-id', trade.uid);
+
+                        card.innerHTML = `
+                            <h3>${trade.skillName}</h3>
+                            <p class="description">${trade.description}</p>
+                            <p>${trade.experience} years of experience</p>
+                            <p>₹${trade.hourlyRate} / hour</p>
+                        `;
+
+                        card.addEventListener('click', () => {
+                            window.location.href = `/new-page?name=${encodeURIComponent(trade.name)}&sname=${encodeURIComponent(trade.skillName)}&description=${encodeURIComponent(trade.description)}&experience=${encodeURIComponent(trade.experience)}&hourlyRate=${encodeURIComponent(trade.hourlyRate)}&contactEmail=${encodeURIComponent(trade.contactEmail)}&socialMedia=${encodeURIComponent(trade.socialMedia)}&upiID=${encodeURIComponent(trade.upiID)}&uid=${encodeURIComponent(trade.uid)}&category=${encodeURIComponent(trade.category)}`;
+                        });
+
+                        suggestionsContainer.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        window.onload = () => {
+            checkSignedIn();
+            fetchAndDisplayTrades();
+        };
+    </script>
+</body>
+</html>

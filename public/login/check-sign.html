@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check User Signed In</title>
+  <script>
+    async function checkSignedIn() {
+      try {
+        const response = await fetch('http://localhost:3001/check-signed-in', {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        });
+
+        if (!response.ok) {
+          throw new Error('User not signed in.');
+        }
+
+        const data = await response.json();
+        document.getElementById('status').innerText = 'User is signed in.';
+        document.getElementById('user-info').innerText = JSON.stringify(data.user, null, 2);
+      } catch (error) {
+        document.getElementById('status').innerText = 'User not signed in.';
+        document.getElementById('user-info').innerText = error.message;
+      }
+    }
+
+    async function signOut() {
+      try {
+        const response = await fetch('http://localhost:3001/sign-out', {
+          method: 'POST',
+          credentials: 'include', // Include cookies in the request
+        });
+
+        if (response.ok) {
+          document.getElementById('status').innerText = 'User signed out successfully.';
+          document.getElementById('user-info').innerText = '';
+        } else {
+          throw new Error('Failed to sign out.');
+        }
+      } catch (error) {
+        document.getElementById('status').innerText = error.message;
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Check User Sign-In Status</h1>
+  <p id="status">Checking...</p>
+  <pre id="user-info"></pre>
+
+  <button onclick="checkSignedIn()">Check Sign-In Status</button>
+  <button onclick="signOut()">Sign Out</button>
+
+  <script>
+    // Automatically check sign-in status on page load
+    checkSignedIn();
+  </script>
+</body>
+</html>

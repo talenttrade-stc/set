@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Banned - Talent Trade</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+              radial-gradient(circle at top right, #4b0082, transparent 60%),
+              #000033;
+            color: white;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+            padding: 20px;
+        }
+
+        .banned-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(26, 26, 61, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #ff3333;
+            margin-bottom: 20px;
+        }
+
+        .ban-icon {
+            font-size: 64px;
+            color: #ff3333;
+            margin: 20px 0;
+        }
+
+        p {
+            color: #ccc;
+            margin: 15px 0;
+        }
+
+        .contact-button {
+            display: inline-block;
+            padding: 15px 30px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #7f00ff, #5f02bc);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-button:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/images/logo.png" alt="Logo" class="logo">
+        </div>
+    </header>
+
+    <div class="banned-container">
+        <h1>Account Banned</h1>
+        <i class="ban-icon">⛔</i>
+        <p>Your account has been temporarily banned due to violation of our community guidelines.</p>
+        <p>If you believe this is a mistake, please contact our support team.</p>
+        <a href="mailto:stc.talenttrade@gmail.com" class="contact-button">Contact Support</a>
+    </div>
+</body>
+</html>

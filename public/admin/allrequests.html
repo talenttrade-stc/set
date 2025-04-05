@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Requests</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+        radial-gradient(circle at top right, #4b0082, transparent 60%),
+        #000033;
+      color: white;
+    }
+    .container {
+      width: 90%;
+      max-width: 800px;
+      margin: 50px auto;
+      background-color: #e6e6f3;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      color: #333;
+    }
+    .header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #4b0082;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #7f00ff;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .button {
+      display: inline-block;
+      padding: 8px 12px;
+      background-color: #7f00ff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #4b0082;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 500px;
+      background: white;
+      color: #333;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
+    .modal-header {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .modal-content p {
+      margin: 10px 0;
+    }
+    .close-button {
+      margin-top: 20px;
+      background-color: #7f00ff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .close-button:hover {
+      background-color: #4b0082;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="history.back()" style="position: absolute; top: 20px; left: 20px; padding: 10px 20px; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">
+    ← Back
+</button>
+  <div class="container">
+    <div class="header">All Trade Requests</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>User ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Requested Skill</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="request-list">
+        <!-- Request rows will be dynamically populated -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal for viewing full trade details -->
+  <div class="overlay" id="overlay"></div>
+  <div class="modal" id="modal">
+    <div class="modal-header">Trade Details</div>
+    <div class="modal-content" id="modal-content">
+      <!-- Trade details will be dynamically populated -->
+    </div>
+    <button class="close-button" onclick="closeModal()">Close</button>
+  </div>
+
+  <script>
+    // Sample Request Data
+    const requests = [
+      {
+        id: 1,
+        userID: "U123",
+        name: "Alice Johnson",
+        email: "alice@example.com",
+        requestedSkill: "Graphic Design",
+        description: "I need a professional logo for my brand.",
+        experience: "Intermediate",
+        hourlyRate: "500",
+        contactEmail: "alice@example.com",
+        socialMedia: "instagram.com/alicejohnson",
+        upiID: "alice@upi",
+      },
+      {
+        id: 2,
+        userID: "U456",
+        name: "Bob Smith",
+        email: "bob@example.com",
+        requestedSkill: "Web Development",
+        description: "Looking for someone to create a portfolio website.",
+        experience: "Advanced",
+        hourlyRate: "800",
+        contactEmail: "bob@example.com",
+        socialMedia: "linkedin.com/in/bobsmith",
+        upiID: "bobsmith@upi",
+      },
+    ];
+
+    const requestList = document.getElementById("request-list");
+    const modal = document.getElementById("modal");
+    const overlay = document.getElementById("overlay");
+    const modalContent = document.getElementById("modal-content");
+
+    // Populate the request list table
+    requests.forEach(request => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${request.id}</td>
+        <td>${request.userID}</td>
+        <td>${request.name}</td>
+        <td>${request.email}</td>
+        <td>${request.requestedSkill}</td>
+        <td><button class="button" onclick="viewDetails(${request.id})">View Details</button></td>
+      `;
+      requestList.appendChild(row);
+    });
+
+    // Function to view trade details in a modal
+    function viewDetails(requestID) {
+      const request = requests.find(req => req.id === requestID);
+      modalContent.innerHTML = `
+        <p><strong>User ID:</strong> ${request.userID}</p>
+        <p><strong>Name:</strong> ${request.name}</p>
+        <p><strong>Email:</strong> ${request.email}</p>
+        <p><strong>Requested Skill:</strong> ${request.requestedSkill}</p>
+        <p><strong>Description:</strong> ${request.description}</p>
+        <p><strong>Experience:</strong> ${request.experience}</p>
+        <p><strong>Hourly Rate:</strong> ₹${request.hourlyRate}</p>
+        <p><strong>Contact Email:</strong> ${request.contactEmail}</p>
+        <p><strong>Social Media:</strong> <a href="https://${request.socialMedia}" target="_blank">${request.socialMedia}</a></p>
+        <p><strong>UPI ID:</strong> ${request.upiID}</p>
+      `;
+      overlay.style.display = "block";
+      modal.style.display = "block";
+    }
+
+    // Function to close the modal
+    function closeModal() {
+      overlay.style.display = "none";
+      modal.style.display = "none";
+    }
+  </script>
+</body>
+</html>

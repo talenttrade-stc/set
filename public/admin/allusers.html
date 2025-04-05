@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Directory - Talent Trade</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+                        radial-gradient(circle at top right, #4b0082, transparent 60%),
+                        #000033;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
+
+        .logo-container {
+            padding: 20px;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 130px;
+            left: 50px;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            color: #ffd700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            text-align: center;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #searchInput {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 51, 0.3);
+            color: #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(75, 0, 130, 0.2);
+        }
+
+        #searchInput:focus {
+            border-color: #7f00ff;
+            box-shadow: 0 0 0 2px rgba(127, 0, 255, 0.3);
+        }
+
+        #searchButton, #showBannedButton {
+            padding: 12px 24px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #searchButton:hover, #showBannedButton:hover {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .user-card {
+            background: rgba(42, 43, 74, 0.7);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            background: rgba(58, 59, 90, 0.8);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-card.banned {
+            border-left: 5px solid #ff4444;
+            order: -1;
+        }
+
+        .user-field {
+            margin: 10px 0;
+        }
+
+        .field-label {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .user-status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status-active {
+            color: #00ff00;
+        }
+
+        .status-banned {
+            color: #ff4444;
+        }
+
+        .loading, .error {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #ffd700;
+            padding: 30px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 51, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #7f00ff;
+            z-index: 1000;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .edit-modal h2 {
+            color: #ffd700;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .edit-modal input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .edit-modal input:focus {
+            outline: none;
+            border-color: #7f00ff;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .save-btn {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        .cancel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ban-btn {
+            background: #ff4444;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .unban-btn {
+            background: #00ff00;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .modal-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="/images/logo.png" alt="Logo" class="logo">
+        </div>
+    </header>
+
+    <button onclick="history.back()" class="back-btn">← Back</button>
+
+    <div class="container">
+        <h1>User Directory</h1>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search users...">
+            <button id="searchButton">Search</button>
+            <button id="showBannedButton">Show Banned Users</button>
+        </div>
+
+        <div id="loading" class="loading">Loading users...</div>
+        <div id="error" class="error"></div>
+        <div id="userList" class="user-list"></div>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay"></div>
+    <div id="editModal" class="edit-modal"></div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDitBOm52MLo2HWYFZMeqPsIgPYhKiF61I",
+            authDomain: "talent-trade-prj.firebaseapp.com",
+            databaseURL: "https://talent-trade-prj-default-rtdb.firebaseio.com",
+            projectId: "talent-trade-prj",
+            storageBucket: "talent-trade-prj.firebasestorage.app",
+            messagingSenderId: "439890473705",
+            appId: "1:439890473705:web:a3eedfdb17c5852e3ff678",
+            measurementId: "G-PP19D9H3VS"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        let allUsers = [];
+        let showingBannedOnly = false;
+
+        // Load users from Firebase
+        function loadUsers() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            
+            database.ref('users').once('value').then(snapshot => {
+                document.getElementById('loading').style.display = 'none';
+                const users = snapshot.val();
+                
+                if (!users) {
+                    document.getElementById('error').textContent = 'No users found.';
+                    document.getElementById('error').style.display = 'block';
+                    return;
+                }
+
+                allUsers = Object.entries(users).map(([uid, data]) => ({ uid, ...data }));
+                renderUsers(allUsers);
+            }).catch(error => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').textContent = `Error loading users: ${error.message}`;
+                document.getElementById('error').style.display = 'block';
+            });
+        }
+
+        // Render users to the page
+        function renderUsers(users) {
+            const userList = document.getElementById('userList');
+            
+            // Sort banned users first
+            const sortedUsers = [...users].sort((a, b) => {
+                if (a.ustatus === 'banned' && b.ustatus !== 'banned') return -1;
+                if (a.ustatus !== 'banned' && b.ustatus === 'banned') return 1;
+                return 0;
+            });
+
+            userList.innerHTML = sortedUsers.map(user => `
+                <div class="user-card ${user.ustatus === 'banned' ? 'banned' : ''}" onclick="editUser('${user.uid}')">
+                    <div class="user-field"><span class="field-label">User ID:</span> ${user.uid}</div>
+                    <div class="user-field"><span class="field-label">Name:</span> ${user.name || 'N/A'}</div>
+                    <div class="user-field"><span class="field-label">Email:</span> ${user.email || 'N/A'}</div>
+                    <div class="user-field"><span class="field-label">Status:</span> 
+                        <span class="user-status ${user.ustatus === 'banned' ? 'status-banned' : 'status-active'}">
+                            ${user.ustatus === 'banned' ? 'Banned' : 'Active'}
+                        </span>
+                    </div>
+                    <div class="user-field"><span class="field-label">College:</span> ${user.college || 'N/A'}</div>
+                    <div class="user-field"><span class="field-label">Phone:</span> ${user.phoneNumber || 'N/A'}</div>
+                </div>
+            `).join('');
+        }
+
+        // Search functionality
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredUsers = allUsers.filter(user => 
+                (user.uid && user.uid.toLowerCase().includes(searchTerm)) ||
+                (user.name && user.name.toLowerCase().includes(searchTerm)) ||
+                (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                (user.college && user.college.toLowerCase().includes(searchTerm)) ||
+                (user.phoneNumber && user.phoneNumber.toLowerCase().includes(searchTerm))
+            );
+            renderUsers(filteredUsers);
+        }
+
+        // Toggle banned users view
+        function toggleBannedView() {
+            showingBannedOnly = !showingBannedOnly;
+            document.getElementById('showBannedButton').textContent = 
+                showingBannedOnly ? 'Show All Users' : 'Show Banned Users';
+            
+            const filteredUsers = showingBannedOnly ? 
+                allUsers.filter(user => user.ustatus === 'banned') : 
+                allUsers;
+                
+            renderUsers(filteredUsers);
+        }
+
+        // Edit user modal
+        function editUser(uid) {
+            const user = allUsers.find(u => u.uid === uid);
+            const modal = document.getElementById('editModal');
+            const overlay = document.getElementById('modalOverlay');
+            
+            modal.innerHTML = `
+                <h2>Edit User</h2>
+                <input type="text" id="editName" placeholder="Name" value="${user.name || ''}">
+                <input type="email" id="editEmail" placeholder="Email" value="${user.email || ''}">
+                <input type="tel" id="editPhone" placeholder="Phone Number" value="${user.phoneNumber || ''}">
+                <input type="text" id="editBio" placeholder="Biography" value="${user.biography || ''}">
+                <input type="text" id="editSocial" placeholder="Social Media" value="${user.socialMedia || ''}">
+                <input type="url" id="editWebsite" placeholder="Website" value="${user.website || ''}">
+                <input type="text" id="editCollege" placeholder="College" value="${user.college || ''}">
+                <input type="text" id="editUpi" placeholder="UPI ID" value="${user.upiID || ''}">
+                
+                <div style="margin: 15px 0; text-align: center;">
+                    <span style="color: #ffd700; font-weight: bold;">Status: </span>
+                    <span style="color: ${user.ustatus === 'banned' ? '#ff4444' : '#00ff00'}">
+                        ${user.ustatus === 'banned' ? 'Banned' : 'Active'}
+                    </span>
+                </div>
+                
+                <div class="button-group">
+                    <button class="modal-btn save-btn" onclick="saveUser('${uid}')">Save</button>
+                    <button class="modal-btn cancel-btn" onclick="closeModal()">Cancel</button>
+                </div>
+                
+                <button class="modal-btn ${user.ustatus === 'banned' ? 'unban-btn' : 'ban-btn'}" 
+                    onclick="toggleBanUser('${uid}', '${user.ustatus}')">
+                    ${user.ustatus === 'banned' ? 'Unban User' : 'Ban User'}
+                </button>
+            `;
+
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        // Save user changes
+        function saveUser(uid) {
+            const updates = {
+                name: document.getElementById('editName').value,
+                email: document.getElementById('editEmail').value,
+                phoneNumber: document.getElementById('editPhone').value,
+                biography: document.getElementById('editBio').value,
+                socialMedia: document.getElementById('editSocial').value,
+                website: document.getElementById('editWebsite').value,
+                college: document.getElementById('editCollege').value,
+                upiID: document.getElementById('editUpi').value
+            };
+
+            database.ref(`users/${uid}`).update(updates)
+                .then(() => {
+                    alert("User updated successfully!");
+                    closeModal();
+                    loadUsers(); // Refresh the user list
+                })
+                .catch(error => {
+                    alert("Error updating user: " + error.message);
+                });
+        }
+
+        // Toggle user ban status
+        function toggleBanUser(uid, status) {
+            const user = allUsers.find(u => u.uid === uid);
+            const action = status === 'banned' ? 'unban' : 'ban';
+            
+            if (confirm(`Are you sure you want to ${action} user ${user.name}?`)) {
+                const updates = {
+                    ustatus: status === 'banned' ? 'active' : 'banned'
+                };
+
+                database.ref(`users/${uid}`).update(updates)
+                    .then(() => {
+                        alert(`User ${action}ned successfully!`);
+                        closeModal();
+                        loadUsers(); // Refresh the user list
+                    })
+                    .catch(error => {
+                        alert(`Error ${action}ning user: ` + error.message);
+                    });
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', loadUsers);
+        document.getElementById('searchButton').addEventListener('click', performSearch);
+        document.getElementById('searchInput').addEventListener('keyup', performSearch);
+        document.getElementById('showBannedButton').addEventListener('click', toggleBannedView);
+        document.getElementById('modalOverlay').addEventListener('click', closeModal);
+    </script>
+</body>
+</html>

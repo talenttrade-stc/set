@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unverified Trades</title>
+    <style>
+        /* Body Styling */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+                        radial-gradient(circle at top right, #4b0082, transparent 60%),
+                        #000033;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Page Title */
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Search Bar */
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            outline: none;
+        }
+        .search-bar::placeholder {
+            color: #ccc;
+        }
+
+        /* Trades Container */
+        #trades-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        /* Trade Card Styling */
+        .trade-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .trade-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Card Content */
+        .trade-card h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #ffd700;
+        }
+
+        .trade-card p {
+            margin: 10px 0;
+            font-size: 1rem;
+            color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="window.history.back()" style="
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    ">← Back</button>
+    <h1>All Trades</h1>
+    <div class="search-container">
+        <input type="text" id="search-bar" class="search-bar" placeholder="Search trades..." onkeyup="filterTrades()" autofocus>
+    </div>
+    <div id="trades-container"></div>
+
+    <script>
+        let tradesData = [];
+
+        async function loadTrades() {
+            try {
+                const response = await fetch('/get-tradesss');
+                tradesData = await response.json();
+                displayTrades(tradesData);
+            } catch (error) {
+                console.error('Error loading trades:', error);
+            }
+        }
+
+        function displayTrades(trades) {
+    const container = document.getElementById('trades-container');
+    container.innerHTML = trades.length === 0 
+        ? '<p>No unverified trades found.</p>'
+        : trades.map(trade => `
+            <div class="trade-card" id="trade-${trade.id}">
+                <h3>${trade.skillName} (${trade.category})</h3>
+                <p>${trade.description}</p>
+                <p>Experience: ${trade.experience} years</p>
+                <p>Hourly Rate: ₹${trade.hourlyRate}/-</p>
+                <p>Contact: ${trade.contactEmail}</p>
+            </div>
+        `).join('');
+
+    // Add click event listeners to each trade card
+    trades.forEach(trade => {
+        const tradeCard = document.getElementById(`trade-${trade.id}`);
+        if (tradeCard) {
+            tradeCard.addEventListener('click', () => handleTradeClick(trade.id));
+        }
+    });
+}
+
+function handleTradeClick(tradeId) {
+    const trade = tradesData.find(t => t.id === tradeId);
+    if (trade) {
+        window.location.href = `/new-page?sname=${encodeURIComponent(trade.skillName)}&description=${encodeURIComponent(trade.description)}&name=${encodeURIComponent(trade.name)}&experience=${encodeURIComponent(trade.experience)}&hourlyRate=${encodeURIComponent(trade.hourlyRate)}&contactEmail=${encodeURIComponent(trade.contactEmail)}&socialMedia=${encodeURIComponent(trade.socialMedia)}&upiID=${encodeURIComponent(trade.upiID)}&uid=${encodeURIComponent(trade.uid)}&category=${encodeURIComponent(trade.category)}`;
+    }
+}
+
+        function filterTrades() {
+            const searchQuery = document.getElementById('search-bar').value.toLowerCase();
+            const filteredTrades = tradesData.filter(trade => 
+                trade.skillName.toLowerCase().includes(searchQuery) ||
+                trade.category.toLowerCase().includes(searchQuery) ||
+                trade.description.toLowerCase().includes(searchQuery) ||
+                trade.name.toLowerCase().includes(searchQuery) ||
+                trade.experience.toString().toLowerCase().includes(searchQuery) ||
+                trade.hourlyRate.toString().toLowerCase().includes(searchQuery) ||
+                trade.contactEmail.toLowerCase().includes(searchQuery) ||
+                (trade.socialMedia && trade.socialMedia.toLowerCase().includes(searchQuery)) ||
+                (trade.upiID && trade.upiID.toLowerCase().includes(searchQuery))
+            );
+            displayTrades(filteredTrades);
+        }
+
+        // Load trades when page loads
+        loadTrades();
+    </script>
+</body>
+</html>

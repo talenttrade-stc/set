@@ -60,7 +60,10 @@
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
-            background: #fff;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+              radial-gradient(circle at top right, #4b0082, transparent 60%),
+              #000033;
+            color: #ccc;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
@@ -68,7 +71,7 @@
         h2 {
             text-align: center;
             margin-bottom: 20px;
-            color: #444;
+            color: #ccc;
         }
 
         .form-group {
@@ -79,39 +82,61 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            color: #000033;
+            color: #ccc;
         }
 
         input[type="text"],
         input[type="email"],
         input[type="number"],
-        textarea,
-        select {
+        input[type="file"],
+
+        textarea {
             width: 100%;
-            padding: 10px;
+            padding: 15px;
             margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid #4b0082;
+            border-radius: 8px;
             box-sizing: border-box;
+            background-color: #1a1a3d;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group select {
+            
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0;
+            border: 1px solid #4b0082;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #1a1a3d;
+            color: #ccc;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        
+        textarea:focus {
+            border-color: #7f00ff;
+            box-shadow: 0 0 8px rgba(127, 0, 255, 0.8);
         }
 
         textarea {
             resize: vertical;
         }
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+     
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #4b0082;
         }
         
     </style>
@@ -120,28 +145,43 @@
  <!-- Header Section -->
  <header>
     <div class="logo">
-
-        <img src="/images/logo.png" alt="Logo" class="logo">
-
+       <img src="/images/logo.png" alt="Logo" class="logo">
     </div>
-
+   
 </header>
-
+<button onclick="history.back()" style="position: absolute; top: 160px; left: 200px; padding: 10px 20px; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">
+    ← Back
+</button>
     <div class="form-container">
-        <h2>Post Your Skill</h2>
+   
+        <h2>Post Your trade</h2>
         <form id="skillForm">
             <!-- Skill Name -->
             <div class="form-group">
-                <label for="skillName">Skill Name</label>
+                <label for="skillName">Trade Name</label>
                 <input type="text" id="skillName" name="skillName" placeholder="e.g., Graphic Design" required>
             </div>
 
             <!-- Description -->
             <div class="form-group">
-                <label for="description">Skill Description</label>
+                <label for="description">Trade Description</label>
                 <textarea id="description" name="description" rows="5" placeholder="Provide a brief description of your skill..." required></textarea>
             </div>
-
+             <!-- Catogory  -->
+             <div class="form-group">
+                <label for="category">Trade Category</label>
+                <select id="category" name="category" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="Creative Skills">Creative Skills</option>
+                    <option value="Academic Skills">Academic Skills</option>
+                    <option value="Technical Skills">Technical Skills</option>
+                    <option value="Social and Leadership Skills">Social and Leadership Skills</option>
+                    <option value="Physical and Performance Skills"> Physical and Performance Skills</option>
+                    <option value=" Personal Development Skills"> Personal Development Skills</option>
+           
+                </select>
+            </div>
+            
             <!-- Experience Level -->
             <div class="form-group">
                 <label for="experience">Experience Level</label>
@@ -162,8 +202,8 @@
 
             <!-- Contact Information -->
             <div class="form-group">
-                <label for="contactEmail">Contact Email</label>
-                <input type="email" id="contactEmail" name="contactEmail" placeholder="e.g., yourname@example.com" required>
+                <label for="contactEmail">Whatsapp Contact Number</label>
+                <input type="number" id="contactEmail" name="contactEmail" placeholder="e.g., 9746000999" required>
             </div>
 
             <!-- InstagramLinks -->
@@ -185,33 +225,136 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit">Post Skill</button>
+            <button type="submit" style="
+                width: 100%;
+                padding: 15px;
+                margin-top: 20px;
+                border: none;
+                border-radius: 8px;
+                background: linear-gradient(135deg, #7f00ff, #5f02bc);
+                color: white;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(127, 0, 255, 0.3);"
+                onmouseover="this.style.transform='scale(1.02)'"
+                onmouseout="this.style.transform='scale(1)'">
+                Post Trade
+            </button>
         </form>
     </div>
 
     <script>
+
+        let userIdd = '';
+        let name = '';
+
+
+async function checkSignedIn() {
+      try {
+        const response = await fetch('http://localhost:3001/check-signed-in', {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        });
+
+        if (!response.ok) {
+          throw new Error('User not signed in.');
+        }
+
+        const data = await response.json();
+        
+        var userDataa = JSON.stringify(data.user, null, 2);
+        console.log(data.user.uid);
+        userIdd = data.user.uid;
+        fetchUserData(userIdd); 
+       
+
+
+      } catch (error) {
+       console.log("User Not Signed In");
+      }
+    }
+
+     checkSignedIn();
+
+     async function fetchUserData(uid) {
+    try {
+      // Replace 'http://localhost:3001' with your actual backend URL if hosted elsewhere
+      const response = await fetch(`http://localhost:3001/user/${uid}`);
+      
+      if (response.ok) {
+        const userData = await response.json();
+
+        console.log(userData);
+        
+        // Populate the profile fields with user data
+        name = userData.name;
+
+       
+
+      } else {
+        console.error('Failed to fetch user data:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error.message);
+    }
+  }
+
+
         const skillForm = document.getElementById('skillForm');
 
-        skillForm.addEventListener('submit', (event) => {
-            event.preventDefault();
+        // Example function to send a POST request to '/post-trade'
+skillForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-            // Capture form data
-            const formData = new FormData(skillForm);
-            const skillData = {
-                skillName: formData.get('skillName'),
-                description: formData.get('description'),
-                experience: formData.get('experience'),
-                hourlyRate: formData.get('hourlyRate'),
-                contactEmail: formData.get('contactEmail'),
-                socialMedia: formData.get('socialMedia'),
-                upiID: formData.get('upiID'),
-            };
+    // Capture form data
+    const formData = new FormData(skillForm);
+    const skillData = {
+        skillName: formData.get('skillName'),
+        description: formData.get('description'),
+        experience: formData.get('experience'),
+        hourlyRate: formData.get('hourlyRate'),
+        contactEmail: formData.get('contactEmail'),
+        socialMedia: formData.get('socialMedia'),
+        upiID: formData.get('upiID'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        name: name,
+        uidd: userIdd,
+        category: formData.get('category'),
+    };
 
-            // Display or send the form data
-            console.log('Skill Data Submitted:', skillData);
-            alert('Your skill has been posted successfully!');
-            skillForm.reset();
+    try {
+        const response = await fetch('http://localhost:3001/post-trade', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(skillData),
         });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Success:', data);
+            alert('Your trade has been posted successfully!');
+            window.history.back();
+        } else {
+            const errorData = await response.json();
+            console.error('Error:', errorData);
+            alert(`Failed to post skill: ${errorData.message}`);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while posting your skill. Please try again later.');
+    }
+
+    // Reset the form after submission
+    skillForm.reset();
+});
+
+// Call the function to send the request
+
     </script>
 </body>
 </html>

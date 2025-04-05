@@ -89,6 +89,7 @@
             flex-wrap: wrap;
         }
 
+        
         .menucard {
             background: #2a2b4a;
             padding: 20px;
@@ -98,7 +99,13 @@
             transition: transform 0.3s, background 0.3s;
             width: 250px;
             height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
         }
 
         .menucard:hover {
@@ -359,8 +366,29 @@
 
 
 
+        .backbutton {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
 
+        .backbutton:hover {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+        }
         
+        .backdiv {
+            position: absolute;
+            top: 60px;
+            right: 40px;
+        }
+
     </style>
 </head>
 <body>
@@ -377,20 +405,36 @@
 
             </div>
         <div class="profile">
-            <button>profile</button>
-        </div>
+  
+        </div> 
+        <div>
+      
     </header>
-
+    <div class="backdiv">
+        <button onclick="signOut()" class="backbutton">
+            Sign Out
+        </button>
+    </div>
     <!-- Main Banner Section -->
     <section class="slider-container">
-     <section class="menu">
-        <h2>MENU</h2>
-        <div class="menu-list">
-            <div class="menucard">All Users</div>
-            <div class="menucard">All Requests</div>
-            <div class="menucard">All trades</div>
-            <div class="menucard">Disputes</div>
-        </div>
+  
+        <section class="menu">
+            <h2>MENU</h2>
+            <div class="menu-list">
+                <a href="/alluser" class="menucard">All Users</a>
+                <a href="/alltdr" class="menucard">All Trades</a>
+                <a href="/alltr" class="menucard">All Requests</a>
+                <a href="/alldisputes" class="menucard">Disputes</a>
+            </div>
+        </section>
+        <section class="menu">
+            <h2>Experience</h2>
+            <div class="menu-list">
+            <a href="/tradesboard" class="menucard" style="width: 70%; max-width: 800px; margin: 20px auto; height: min-content;">
+            User's Interface
+            </a>
+            </div>
+        </section>
     </section></section></section>
 
 
@@ -441,7 +485,66 @@
         window.onload = () => {
             // Auto Slide
             setInterval(nextSlide, 5000); // Change slide every 5 seconds
+            checkSignedIn(); // Check admin status when page loads
         };
+        async function checkSignedIn() {
+            try {
+                const response = await fetch('http://localhost:3001/check-signed-in', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    window.location.href = '/';
+                    throw new Error('User not signed in.');
+                }
+
+                const data = await response.json();
+                
+                // Check if user exists and is admin
+                if (!data.user || data.user.admin !== 'yes') {
+                    console.log('Not an admin user');
+                    window.location.href = '/';
+                    return;
+                }
+
+                // If we reach here, user is an admin
+                console.log('Admin user verified:', data.user.uid);
+
+            } catch (error) {
+                console.log("Error:", error.message);
+                window.location.href = '/';
+                window.location.href = '/';
+            }
+        }
+ 
+    async function signOut() {
+        // Show confirmation dialog
+        const confirmSignOut = confirm("Are you sure you want to sign out?");
+        
+        // If user clicks "Cancel", return without doing anything
+        if (!confirmSignOut) {
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3001/sign-out', {
+                method: 'POST',
+                credentials: 'include', // Include cookies in the request
+            });
+
+            if (response.ok) {
+                document.getElementById('status').innerText = 'User signed out successfully.';
+                document.getElementById('user-info').innerText = '';
+                window.location.href = '/'; // Redirect to home page after sign out
+            } else {
+                throw new Error('Failed to sign out.');
+            }
+        } catch (error) {
+            document.getElementById('status').innerText = error.message;
+        }
+    }
+
     </script>
     
 </body>

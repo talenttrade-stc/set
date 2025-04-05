@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Requested Trades</title>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a44, #3d0066);
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .trade-card {
+            display: flex;
+            align-items: center;
+            background-color: #e6e6f3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            justify-content: space-between;
+        }
+
+        .trade-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .trade-name {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .trade-description {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .verification-status {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .verified {
+            color: green;
+        }
+
+        .not-verified {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">My Requested Trades</div>
+        <div id="trades-container"></div>
+    </div>
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const requestedTradeId = urlParams.get('tradeId');
+
+        // Update fetchTrades function to only show the requested trade
+        function fetchTrades() {
+            const tradesContainer = document.getElementById("trades-container");
+
+            if (requestedTradeId) {
+                database.ref("Post Trade/" + requestedTradeId).once("value", (snapshot) => {
+                    const trade = snapshot.val();
+                    if (trade) {
+                        const verificationStatus = trade.verification === "yes" 
+                            ? '<span class="verification-status verified">✔ Verified</span>' 
+                            : '<span class="verification-status not-verified">❌ Trade Not Verified</span>';
+
+                        const tradeCard = document.createElement("div");
+                        tradeCard.classList.add("trade-card");
+                        tradeCard.innerHTML = `
+                            <div class="trade-content">
+                                <div class="trade-name">${trade.skillName}</div>
+                                <div class="trade-description">${trade.description}</div>
+                                ${verificationStatus}
+                                <div class="trade-owner">Posted by: ${trade.userName}</div>
+                            </div>
+                        `;
+
+                        tradesContainer.appendChild(tradeCard);
+                    } else {
+                        tradesContainer.innerHTML = "<p>Trade not found</p>";
+                    }
+                });
+            } else {
+                tradesContainer.innerHTML = "<p>No trade selected</p>";
+            }
+        }
+    </script>
+    <script>
+        // Function to show all trades
+        function showAllTrades() {
+            const tradesContainer = document.getElementById("trades-container");
+            
+            database.ref("Post Trade").once("value", (snapshot) => {
+                tradesContainer.innerHTML = ""; // Clear previous entries
+                snapshot.forEach((childSnapshot) => {
+                    const trade = childSnapshot.val();
+                    const verificationStatus = trade.verification === "yes" 
+                        ? '<span class="verification-status verified">✔ Verified</span>' 
+                        : '<span class="verification-status not-verified">❌ Trade Not Verified</span>';
+
+                    const tradeCard = document.createElement("div");
+                    tradeCard.classList.add("trade-card");
+                    tradeCard.innerHTML = `
+                        <div class="trade-content">
+                            <div class="trade-name">${trade.skillName}</div>
+                            <div class="trade-description">${trade.description}</div>
+                            ${verificationStatus}
+                            <div class="trade-owner">Posted by: ${trade.userName}</div>
+                        </div>
+                    `;
+
+                    tradesContainer.appendChild(tradeCard);
+                });
+            });
+        }
+    </script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDitBOm52MLo2HWYFZMeqPsIgPYhKiF61I",
+            authDomain: "talent-trade-prj.firebaseapp.com",
+            databaseURL: "https://talent-trade-prj-default-rtdb.firebaseio.com",
+            projectId: "talent-trade-prj",
+            storageBucket: "talent-trade-prj.firebasestorage.app",
+            messagingSenderId: "439890473705",
+            appId: "1:439890473705:web:a3eedfdb17c5852e3ff678",
+            measurementId: "G-PP19D9H3VS"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Fetch trades from Firebase
+        function fetchTrades() {
+            const tradesContainer = document.getElementById("trades-container");
+
+            database.ref("Post Trade").on("value", (snapshot) => {
+                tradesContainer.innerHTML = ""; // Clear previous entries
+                snapshot.forEach((childSnapshot) => {
+                    const trade = childSnapshot.val();
+                    const verificationStatus = trade.verification === "yes" 
+                        ? '<span class="verification-status verified">✔ Verified</span>' 
+                        : '<span class="verification-status not-verified">❌ Trade Not Verified</span>';
+
+                    const tradeCard = document.createElement("div");
+                    tradeCard.classList.add("trade-card");
+                    tradeCard.innerHTML = `
+                        <div class="trade-content">
+                            <div class="trade-name">${trade.skillName}</div>
+                            <div class="trade-description">${trade.description}</div>
+                            ${verificationStatus}
+                        </div>
+                    `;
+
+                    tradesContainer.appendChild(tradeCard);
+                });
+            });
+        }
+
+        // Load trades on page load
+        window.onload = fetchTrades;
+    </script>
+</body>
+</html>

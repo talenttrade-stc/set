@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posted Trades</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+                        radial-gradient(circle at top right, #4b0082, transparent 60%),
+                        #000033;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            color: #ffd700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .trade-card {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .trade-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .trade-name {
+            font-weight: bold;
+            font-size: 18px;
+            color: #ffd700;
+            margin-bottom: 5px;
+        }
+
+        .trade-description {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .trade-button {
+            background-color: #7f00ff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .trade-button:hover {
+            background-color: #4b0082;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #000033;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 500px;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h2 {
+            color: #ffd700;
+            margin-top: 0;
+        }
+
+        .modal-content p {
+            margin: 10px 0;
+        }
+
+        .modal-content strong {
+            color: #ffd700;
+        }
+
+        .close {
+            color: #ff5555;
+            font-size: 28px;
+            font-weight: bold;
+            float: right;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #ff0000;
+        }
+
+        .logo-container {
+            padding: 20px;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 130px;
+            left: 50px;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .verification-badge {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .verified {
+            background-color: #4CAF50;
+        }
+
+        .unverified {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <footer>
+        <div class="logo-container">
+            <img src="/images/logo.png" alt="Logo" class="logo">
+        </div>
+    </footer>
+    
+    <button onclick="history.back()" class="back-btn">← Back</button>
+    
+    <div class="container">
+        <div class="header">Posted Trades</div>
+        <div id="trades-container"></div>
+    </div>
+
+    <!-- Modal Dialog -->
+    <div id="tradeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Trade Details</h2>
+            <div id="tradeDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDitBOm52MLo2HWYFZMeqPsIgPYhKiF61I",
+            authDomain: "talent-trade-prj.firebaseapp.com",
+            databaseURL: "https://talent-trade-prj-default-rtdb.firebaseio.com",
+            projectId: "talent-trade-prj",
+            storageBucket: "talent-trade-prj.firebasestorage.app",
+            messagingSenderId: "439890473705",
+            appId: "1:439890473705:web:a3eedfdb17c5852e3ff678",
+            measurementId: "G-PP19D9H3VS"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Function to fetch trades from Firebase
+        function fetchTrades() {
+            const tradesContainer = document.getElementById("trades-container");
+
+            // First get the current user's UID
+            fetch('http://localhost:3001/check-signed-in', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(userData => {
+                const currentUserUid = userData.user.uid;
+                
+                database.ref("Post Trade").on("value", (snapshot) => {
+                    tradesContainer.innerHTML = ""; // Clear previous entries
+                    
+                    // Create arrays for verified and unverified trades
+                    let unverifiedTrades = [];
+                    let verifiedTrades = [];
+
+                    snapshot.forEach((childSnapshot) => {
+                        const trade = childSnapshot.val();
+                        if (trade.uid === currentUserUid) {
+                            if (trade.verification === "yes") {
+                                verifiedTrades.push(trade);
+                            } else {
+                                unverifiedTrades.push(trade);
+                            }
+                        }
+                    });
+
+                    // Render unverified trades first, then verified trades
+                    [...unverifiedTrades, ...verifiedTrades].forEach(trade => {
+                        const tradeCard = document.createElement("div");
+                        tradeCard.classList.add("trade-card");
+                        tradeCard.setAttribute('data-trade', JSON.stringify(trade));
+                        tradeCard.innerHTML = `
+                            <div class="trade-content">
+                                <div class="trade-name">${trade.skillName}</div>
+                                <div class="trade-description">${trade.description}</div>
+                                <span class="verification-badge ${trade.verification === "yes" ? 'verified' : 'unverified'}">
+                                    ${trade.verification === "yes" ? "Verified" : "Not Verified"}
+                                </span>
+                            </div>
+                            <button class="trade-button" onclick='showTradeDetails(${JSON.stringify(trade)})'>View Details</button>
+                        `;
+                        tradesContainer.appendChild(tradeCard);
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+                tradesContainer.innerHTML = '<p style="color: #ccc; text-align: center;">Error loading trades. Please try again later.</p>';
+            });
+        }
+
+        // Function to show trade details in a modal
+        function showTradeDetails(trade) {
+            const detailsDiv = document.getElementById("tradeDetails");
+            // First fetch the logged-in user's UID
+            fetch('http://localhost:3001/check-signed-in', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Only show trade details if the trade belongs to the logged-in user
+                if (data.user && data.user.uid === trade.uid) {
+                    detailsDiv.innerHTML = `
+                        <p><strong>Category:</strong> ${trade.category || "N/A"}</p>
+                        <p><strong>Contact Email:</strong> ${trade.contactEmail || "N/A"}</p>
+                        <p><strong>Description:</strong> ${trade.description || "N/A"}</p>
+                        <p><strong>Experience:</strong> ${trade.experience || "N/A"}</p>
+                        <p><strong>Hourly Rate:</strong> ${trade.hourlyRate || "N/A"}</p>
+                        <p><strong>ID:</strong> ${trade.id || "N/A"}</p>
+                        <p><strong>Name:</strong> ${trade.name || "N/A"}</p>
+                        <p><strong>Skill Name:</strong> ${trade.skillName || "N/A"}</p>
+                        <p><strong>Social Media:</strong> ${trade.socialMedia || "N/A"}</p>
+                        <p><strong>UPI ID:</strong> ${trade.upiID || "N/A"}</p>
+                        <p><strong>Verification:</strong> <span class="verification-badge ${trade.verification === "yes" ? 'verified' : 'unverified'}">${trade.verification === "yes" ? "Verified" : "Not Verified"}</span></p>
+                    `;
+                    document.getElementById("tradeModal").style.display = "flex";
+                } else {
+                    alert("You can only view details of your own trades");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error fetching user data");
+            });
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById("tradeModal").style.display = "none";
+        }
+
+        // Call functions when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchTrades();
+        });
+    </script>
+</body>
+</html>

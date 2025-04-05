@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Disputes</title>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+                  radial-gradient(circle at top right, #4b0082, transparent 60%),
+                  #000033;
+      color: white;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+    }
+
+    .logo-container {
+      padding: 20px;
+    }
+
+    .logo {
+      width: 150px;
+      height: auto;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 130px;
+      left: 50px;
+      padding: 10px 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 80px auto 50px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h1, h2 {
+      color: #ffd700;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    .search-container {
+      margin: 30px auto;
+      max-width: 600px;
+      position: relative;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 12px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 51, 0.3);
+      color: #ddd;
+      border-radius: 25px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(75, 0, 130, 0.2);
+    }
+
+    .search-container input:focus {
+      border-color: #7f00ff;
+      box-shadow: 0 0 0 2px rgba(127, 0, 255, 0.3);
+    }
+
+    .disputes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .dispute-card {
+      background: rgba(42, 43, 74, 0.7);
+      border-radius: 10px;
+      padding: 25px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+    }
+
+    .dispute-card:hover {
+      transform: translateY(-5px);
+      background: rgba(58, 59, 90, 0.8);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .dispute-card h3 {
+      color: #ffd700;
+      margin-top: 0;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+    }
+
+    .dispute-card p {
+      margin: 8px 0;
+      color: #ccc;
+    }
+
+    .view-details {
+      color: #7f00ff;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 15px;
+      transition: color 0.3s ease;
+    }
+
+    .view-details:hover {
+      color: #4b0082;
+      text-decoration: underline;
+    }
+
+    .status-pending { color: #ffd700; }
+    .status-resolved { color: #00ff00; }
+    .status-rejected { color: #ff5555; }
+    .status-underreview { color: #2575fc; }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+    }
+
+    .dispute-details {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 51, 0.9);
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid #7f00ff;
+      z-index: 1001;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .dispute-details h2 {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .dispute-details p {
+      margin: 10px 0;
+      color: #ccc;
+    }
+
+    .dispute-details strong {
+      color: #ffd700;
+    }
+
+    .status-buttons {
+      margin-top: 25px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      min-width: 120px;
+    }
+
+    .status-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-pending {
+      background-color: #ffa500;
+      color: white;
+    }
+
+    .btn-resolved {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .btn-rejected {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .btn-review {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+    }
+
+    .close-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 10px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .no-disputes {
+      text-align: center;
+      color: #ccc;
+      font-size: 1.1rem;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="/images/logo.png" alt="Logo" class="logo">
+    </div>
+  </header>
+
+  <button onclick="history.back()" class="back-btn">← Back</button>
+
+  <div class="container">
+    <h1>Admin Dispute Dashboard</h1>
+    
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search disputes...">
+    </div>
+
+    <div class="disputes-grid" id="disputesGrid"></div>
+  </div>
+
+  <div id="overlay" class="overlay"></div>
+  <div id="disputeDetails" class="dispute-details">
+    <div id="disputeContent"></div>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDitBOm52MLo2HWYFZMeqPsIgPYhKiF61I",
+      authDomain: "talent-trade-prj.firebaseapp.com",
+      databaseURL: "https://talent-trade-prj-default-rtdb.firebaseio.com",
+      projectId: "talent-trade-prj",
+      storageBucket: "talent-trade-prj.firebasestorage.app",
+      messagingSenderId: "439890473705",
+      appId: "1:439890473705:web:a3eedfdb17c5852e3ff678",
+      measurementId: "G-PP19D9H3VS"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    function loadDisputes() {
+      console.log('Loading disputes...');
+      const disputesRef = database.ref('Disputes');
+      disputesRef.on('value', (snapshot) => {
+        const disputes = snapshot.val();
+        console.log('Disputes data:', disputes);
+        const disputesGrid = document.getElementById('disputesGrid');
+        disputesGrid.innerHTML = '';
+
+        if (!disputes) {
+          disputesGrid.innerHTML = '<p class="no-disputes">No disputes found</p>';
+          return;
+        }
+
+        for (let key in disputes) {
+          const dispute = disputes[key];
+          const card = document.createElement('div');
+          card.className = 'dispute-card';
+          card.onclick = () => showDisputeDetails(key);
+          card.innerHTML = `
+            <h3>Dispute #${dispute.transactionId || key.substring(0, 8)}</h3>
+            <p><strong>Date:</strong> ${new Date(dispute.createdAt).toLocaleDateString()}</p>
+            <p><strong>User:</strong> ${dispute.userId}</p>
+            <p><strong>Type:</strong> ${dispute.disputeType}</p>
+            <p><strong>Status:</strong> <span class="status-${dispute.status.toLowerCase()}">${dispute.status}</span></p>
+            <span class="view-details">View Details →</span>
+          `;
+          disputesGrid.appendChild(card);
+        }
+      });
+    }
+
+    function showDisputeDetails(disputeId) {
+      const disputeRef = database.ref('Disputes/' + disputeId);
+      disputeRef.once('value', (snapshot) => {
+        const dispute = snapshot.val();
+        const detailsContent = `
+          <h2>Dispute Details</h2>
+          <p><strong>ID:</strong> ${dispute.id || disputeId}</p>
+          <p><strong>User ID:</strong> ${dispute.userId}</p>
+          <p><strong>Transaction ID:</strong> ${dispute.transactionId || 'N/A'}</p>
+          <p><strong>Type:</strong> ${dispute.disputeType}</p>
+          <p><strong>Description:</strong> ${dispute.description}</p>
+          <p><strong>Status:</strong> <span class="status-${dispute.status.toLowerCase()}">${dispute.status}</span></p>
+          <p><strong>Created:</strong> ${new Date(dispute.createdAt).toLocaleString()}</p>
+          
+          <div class="status-buttons">
+            <button class="status-btn btn-pending" onclick="updateDisputeStatus('${disputeId}', 'pending')">Pending</button>
+            <button class="status-btn btn-review" onclick="updateDisputeStatus('${disputeId}', 'UnderReview')">Under Review</button>
+            <button class="status-btn btn-resolved" onclick="updateDisputeStatus('${disputeId}', 'resolved')">Resolved</button>
+            <button class="status-btn btn-rejected" onclick="updateDisputeStatus('${disputeId}', 'rejected')">Rejected</button>
+          </div>
+          
+          <button class="close-btn" onclick="closeDetails()">Close</button>
+        `;
+        document.getElementById('disputeContent').innerHTML = detailsContent;
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('disputeDetails').style.display = 'block';
+      });
+    }
+
+    function updateDisputeStatus(disputeId, newStatus) {
+      const disputeRef = database.ref('Disputes/' + disputeId);
+      disputeRef.update({
+        status: newStatus,
+        updatedAt: new Date().toISOString()
+      }).then(() => {
+        alert('Status updated successfully');
+        closeDetails();
+      }).catch((error) => {
+        alert('Error updating status: ' + error.message);
+      });
+    }
+
+    function closeDetails() {
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('disputeDetails').style.display = 'none';
+    }
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const searchText = e.target.value.toLowerCase();
+      const cards = document.getElementsByClassName('dispute-card');
+      
+      for (let card of cards) {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchText) ? '' : 'none';
+      }
+    });
+
+    // Close details when clicking overlay
+    document.getElementById('overlay').addEventListener('click', closeDetails);
+
+    // Load disputes when page loads
+    document.addEventListener('DOMContentLoaded', loadDisputes);
+  </script>
+</body>
+</html>

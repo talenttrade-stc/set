@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispute Status - TalentTrade</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+                        radial-gradient(circle at top right, #4b0082, transparent 60%),
+                        #000033;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
+
+        .logo-container {
+            padding: 20px;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 130px;
+            left: 50px;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 80px auto 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h2 {
+            color: #ffd700;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            text-align: center;
+        }
+
+        .disputes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(42, 43, 74, 0.7);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(58, 59, 90, 0.8);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            color: #ffd700;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        .progress {
+            background: rgba(255, 255, 255, 0.2);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+            margin-top: 20px;
+        }
+
+        .status-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .status-dot {
+            position: absolute;
+            left: 0;
+            top: 3px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #4b0082;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status-item.completed .status-dot {
+            background: #00ff00;
+        }
+
+        .status-item.active .status-dot {
+            background: #ffffff;
+        }
+
+        .status-item.rejected .status-dot {
+            background: #ff0000;
+        }
+
+        .status-item p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .status-pending {
+            color: #ffd700;
+        }
+
+        .status-underreview {
+            color: #2575fc;
+        }
+
+        .status-resolved {
+            color: #00ff00;
+        }
+
+        .status-rejected {
+            color: #ff5555;
+        }
+
+        .no-disputes {
+            text-align: center;
+            color: #ccc;
+            font-size: 1.1rem;
+            margin-top: 30px;
+        }
+
+        .detail-view {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="/images/logo.png" alt="Logo" class="logo">
+        </div>
+    </header>
+
+    <button onclick="history.back()" class="back-btn">← Back</button>
+
+    <div class="container">
+        <h2>Your Disputes</h2>
+        <div id="disputes-container"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDitBOm52MLo2HWYFZMeqPsIgPYhKiF61I",
+            authDomain: "talent-trade-prj.firebaseapp.com", 
+            databaseURL: "https://talent-trade-prj-default-rtdb.firebaseio.com",
+            projectId: "talent-trade-prj",
+            storageBucket: "talent-trade-prj.firebasestorage.app",
+            messagingSenderId: "439890473705",
+            appId: "1:439890473705:web:a3eedfdb17c5852e3ff678",
+            measurementId: "G-PP19D9H3VS"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function getProgressWidth(status) {
+            switch(status.toLowerCase()) {
+                case 'resolved':
+                    return 100;
+                case 'underreview':
+                    return 66;
+                case 'in_review':
+                    return 50;
+                default:
+                    return 33;
+            }
+        }
+
+        function showDisputeDetails(dispute) {
+            const container = document.getElementById('disputes-container');
+            container.innerHTML = `
+                <button onclick="loadAllDisputes('${dispute.uid}')" class="back-btn">← Back to Disputes</button>
+                <div class="detail-view">
+                    <h2 style="text-align: left;">Dispute Status Tracker</h2>
+                    <div class="card">
+                        <h3>Dispute #${dispute.transactionId || dispute.description}</h3>
+                        <p><strong>Type:</strong> ${dispute.disputeType}</p>
+                        <p><strong>Submitted:</strong> ${new Date(dispute.createdAt).toLocaleDateString()}</p>
+                        
+                        <div class="progress">
+                            <div class="progress-bar" style="width: ${getProgressWidth(dispute.status)}%"></div>
+                        </div>
+                        
+                        <div class="timeline">
+                            <div class="status-item ${dispute.status !== 'pending' ? 'completed' : 'active'}">
+                                <div class="status-dot"></div>
+                                <p>Dispute Submitted</p>
+                            </div>
+                            <div class="status-item ${dispute.status.toLowerCase() === 'underreview' ? 'active' : 
+                                ['resolved', 'rejected'].includes(dispute.status.toLowerCase()) ? 'completed' : ''}">
+                                <div class="status-dot"></div>
+                                <p>Under Review</p>
+                            </div>
+                            <div class="status-item ${dispute.status.toLowerCase() === 'resolved' ? 'completed' : 
+                                dispute.status.toLowerCase() === 'rejected' ? 'rejected' : ''}">
+                                <div class="status-dot"></div>
+                                <p>${dispute.status.toLowerCase() === 'rejected' ? 'Rejected' : 'Resolved'}</p>
+                            </div>
+                        </div>
+                        
+                        <h4 style="margin-top: 30px; color: #ffd700;">Details</h4>
+                        <p>${dispute.description}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadAllDisputes(uid) {
+            if (!uid) {
+                console.error('No user ID provided');
+                return;
+            }
+
+            database.ref('Disputes').orderByChild('uid').equalTo(uid).once('value', (snapshot) => {
+                const disputes = snapshot.val();
+                const disputesContainer = document.getElementById('disputes-container');
+                disputesContainer.innerHTML = '';
+
+                if (!disputes) {
+                    disputesContainer.innerHTML = '<p class="no-disputes">No disputes found</p>';
+                    return;
+                }
+
+                const disputesGrid = document.createElement('div');
+                disputesGrid.className = 'disputes-grid';
+
+                Object.entries(disputes).forEach(([id, dispute]) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.onclick = () => showDisputeDetails(dispute);
+                    
+                    const status = dispute.status || 'pending';
+                    const statusClass = `status-${status.toLowerCase().replace(' ', '')}`;
+                    const progressWidth = getProgressWidth(status);
+
+                    card.innerHTML = `
+                        <h3>Dispute #${dispute.transactionId || id.substring(0, 8)}</h3>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: ${progressWidth}%"></div>
+                        </div>
+                        <p><strong>Status:</strong> <span class="${statusClass}">${status}</span></p>
+                        <p><strong>Type:</strong> ${dispute.disputeType}</p>
+                        <p><strong>Created:</strong> ${new Date(dispute.createdAt).toLocaleDateString()}</p>
+                    `;
+                    disputesGrid.appendChild(card);
+                });
+
+                disputesContainer.appendChild(disputesGrid);
+            });
+        }
+
+        fetch('http://localhost:3001/check-signed-in', {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(userData => {
+            const uid = userData.user.uid;
+            loadAllDisputes(uid);
+        })
+        .catch(error => {
+            console.error('Authentication error:', error);
+            document.getElementById('disputes-container').innerHTML = 
+                '<p class="no-disputes">Please sign in to view your disputes</p>';
+        });
+    </script>
+</body>
+</html>

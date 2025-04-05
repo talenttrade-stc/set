@@ -71,41 +71,89 @@
             border-radius: 10px;
             align-items: start;
         }
- /* Menu Section */
- .menu {
-            text-align: center;
-            margin: 20px;
-        }
 
-        .menu h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+        /* Slider container */
+.slider-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px; /* Adjust the max width as per your design */
+    margin: auto;
+    overflow: hidden;
+}
 
-        .menu .menu-list {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+/* Slider */
+.slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
 
-        .menucard {
-            background: #2a2b4a;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s, background 0.3s;
-            width: 350px;
-            height: 100px;
-            justify-content: center;
-        }
+/* Slide */
+.slide {
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        .menucard:hover {
-            transform: scale(1.05);
-            background: #3a3b5a;
-        }
+.slide img {
+    width: 100%; /* Adjust the image size to fit the container */
+    height: auto;
+}
 
+/* Navigation arrows */
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 50%; /* Make the button circular */
+    z-index: 10;
+    width: 15px; /* Set a fixed width */
+    height: 15px; /* Set a fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease; /* Add a smooth hover effect */
+}
+
+
+.arrow.left {
+    left: 10px;
+}
+
+.arrow.right {
+    right: 10px;
+}
+
+/* Dots container */
+.dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: #fff;
+}
+
+ 
         /* Services Section */
         .services {
             text-align: center;
@@ -138,6 +186,71 @@
             transform: scale(1.05);
             background: #3a3b5a;
         }
+
+    /* Menu Section */
+.menu {
+    text-align: center;
+    margin: 40px auto; /* Add margin for spacing */
+    padding: 20px;
+    max-width: 1200px; /* Set a max-width to prevent stretching on large screens */
+}
+
+.menu h2 {
+    font-size: 2.5rem; /* Larger font size for emphasis */
+    font-weight: 600;
+    color: #fff; /* White color for the heading */
+    margin-bottom: 30px; /* Add space below the heading */
+    text-transform: uppercase; /* Uppercase for a modern look */
+    letter-spacing: 2px; /* Space between letters */
+}
+
+/* Menu List */
+.menu .menu-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+/* Menu Cards */
+.menucard {
+    background: #2a2b4a;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s, box-shadow 0.3s; /* Added box-shadow transition */
+    width: 300px; /* Adjusted width for a better fit */
+    height: 120px; /* Adjusted height for more spacing */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+    text-decoration: none; /* Remove underline */
+}
+
+/* Menu Card Hover Effect */
+.menucard:hover {
+    transform: scale(1.05);
+    background: #3a3b5a;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
+}
+
+/* Menu Card Text */
+.menucard div {
+    font-size: 1.2rem;
+    font-weight: 500;
+    letter-spacing: 1px; /* Space between letters for text clarity */
+    color: #fff; /* White color for text */
+    transition: color 0.3s;
+}
+
+/* Menu Card Text Hover Effect */
+.menucard:hover div {
+    color: #6a11cb; /* Change text color on hover */
+}
+
 
         /* Suggestions Section */
         .suggestions {
@@ -287,40 +400,44 @@
 
      
     
-/* SEARCH */
+/* Search Container */
 .search-container {
-  display: flex;
-  align-items: center;
-  background-color: #000033;
-  border-radius: 40px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 5px;
-  width: 400px;
-  padding: 10px 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 400px;
+    padding: 8px 16px;
+    background-color: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.search-input {
-  border: none;
-  padding: 10px;
-  width: 300px;
-  border-radius: 4px;
-  outline: none;
-  font-size: 16px;
+.search-container p {
+    flex-grow: 1;
+    margin: 0;
+    padding: 8px;
+    color: #666666;
+    font-size: 14px;
 }
 
 .search-button {
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin-left: 10px;
-  border-radius: 40px;
-  cursor: pointer;
-  font-size: 16px;
+    padding: 8px 16px;
+    margin-left: 8px;
+    background-color: #4b0082;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 .search-button:hover {
-  background-color: #0056b3;
+    background-color: #3a006b;
+}
+
+.search-button:active {
+    transform: scale(0.98);
 }
 
 
@@ -357,10 +474,65 @@
             background: #3a3b5a;
         }
 
+        .menucard a {
+  text-decoration: none; /* Remove underline */
+  font-size: 40px;
+  font-weight: bold;
+  color: #e0e0e0; /* Dark text color */
+}
+
+.menucard:hover {
+  background-color: #090a1a; /* Slightly darker on hover */
+  transform: translateY(-5px); /* Lift effect on hover */
+}
+
+.menucard a:hover {
+  color: #007BFF; /* Change text color on hover */
+}
+
+/* CSS for the button */
+button {
+  background-color: transparent; /* No background for the button */
+  border: none; /* Remove default border */
+  padding: 0; /* Remove default padding */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  display: inline-flex; /* Aligns image properly */
+  align-items: center;
+  justify-content: center;
+}
+
+/* CSS for the image inside the button */
+.logo2 {
+  width: 40px; /* Set the desired width */
+  height: auto; /* Maintain aspect ratio */
+  filter: brightness(0) invert(1); /* Change the color to white */
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Add smooth transition effects */
+}
+
+button:hover .logo2 {
+  transform: scale(1.1); /* Slightly enlarge the image on hover */
+  opacity: 0.8; /* Reduce opacity for a hover effect */
+}
+.footicon {
+    display: flex; /* Arrange children in a horizontal row */
+    justify-content: center; /* Center icons horizontally within the container */
+    align-items: center; /* Align icons vertically in the container */
+    gap: 20px; /* Add space between the icons */
+}
+
+    .suggestion-card .description {
+      display: -webkit-box;         /* Enables multi-line truncation */
+      -webkit-line-clamp: 2;        /* Change to the number of lines you want */
+      -webkit-box-orient: vertical; /* Required for multi-line truncation */
+      overflow: hidden;             /* Hides the overflowing content */
+      text-overflow: ellipsis;      /* Adds ellipsis (...) */
+      line-height: 1.5em;           /* Adjust the line height */
+      max-height: 3em;              /* line-height * number of lines */
+    }
 
 
 
-        
+
     </style>
 </head>
 <body>
@@ -371,45 +543,51 @@
             <img src="/images/logo.png" alt="Logo" class="logo">
 
         </div>
-
-
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-box" placeholder="Search here...">
-        <button class="search-button" onclick="performSearch()">Search    </button>
+        <div class="search-container" onclick="window.location.href='/all-trades'" style="cursor: pointer;">
+            
+            <p class="search-input">Search Here</p>
+            <button class="search-button">Search</button>
+          </div>
     
 
             </div>
-        <div class="login-container">
-            <button>Login</button>
-        </div>
-        <div class="notification">
-            <button>notification</button>
-        </div>
+      <div class="footicon">
+     <!--   <div class="notification">
+            <a href="/notification"> <button>  <img src="/images/bell.png" alt="Logo" class="logo2"> </button> </a>
+          </div>-->
         <div class="profile">
-            <button>profile</button>
-        </div>
+           <a href="/profile"><button>  <img src="/images/profile-user.png" alt="Logo" class="logo2">  </button> </a> 
+        </div> </div>
     </header>
 
     <!-- Main Banner Section -->
     <section class="slider-container">
         <div class="slider" id="slider">
             <div class="slide"><img src="/images/testimg.png" alt="Slide 1"></div>
-            <div class="slide"><img src="/images/testimg.png" alt="Slide 2"></div>
-            <div class="slide"><img src="/images/testimg.png" alt="Slide 3"></div>
+            <div class="slide"><img src="/images/testimg1.png" alt="Slide 2"></div>
+            <div class="slide"><img src="/images/testimg2.png" alt="Slide 3"></div>
         </div>
         <!-- Navigation Arrows -->
         <div class="arrow left" onclick="prevSlide()">&#8249;</div>
         <div class="arrow right" onclick="nextSlide()">&#8250;</div>
+        <!-- Dots for navigation (optional, can be added to the code) -->
+        <div class="dots" id="dots"></div>
     </section>
+    
 
      <!-- Main Menu Section -->
      <section class="menu">
         <h2>MENU</h2>
         <div class="menu-list">
-            <div class="menucard">Creative Skills</div>
-            <div class="menucard">Academic Skills</div>
+            <a href="/tradesboard" class="menucard">
+                <div>Trades Board</div>
+            </a>
+            <a id="addmin" href="/admin" class="menucard">
+                <div>Admin Panel</div>
+            </a>
         </div>
     </section>
+    
 
 
 
@@ -417,108 +595,204 @@
     <section class="suggestions">
         <h2>Talents</h2>
         <div class="suggestion-cards">
-            <div class="suggestion-card">
+            <!-- Cards will be dynamically populated via JavaScript --
                 <h3>Kevin M</h3>
                 <p>I will create minimalist and luxury logo design for your business</p>
                 <span>4.9 (245+)</span>
                 <p>From ₹2,250</p>
             </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
+
+            -->
+           
         </div>
     </section>
 
 
+    <style>
+    .view-more-container {
+        text-align: center;
+        margin: 30px 0;
+    }
 
+    .view-more-btn {
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .view-more-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(to right, #2575fc, #6a11cb);
+    }
+    </style>
+
+    <div class="view-more-container">
+        <button class="view-more-btn" onclick="viewAllTrades()">View More Talents</button>
+    </div>
+
+    <script>
+    function viewAllTrades() {
+        window.location.href = '/all-trades';
+    }
+
+    // Modify the existing trade fetching code to only show 8 random trades
+    const existingFetchCode = document.querySelector('.suggestion-cards').innerHTML;
+    fetch('/get-trades')
+        .then(response => response.json())
+        .then(trades => {
+            const verifiedTrades = trades.filter(trade => trade.verification === "yes" || trade.verification === true);
+            const randomTrades = verifiedTrades.sort(() => 0.5 - Math.random()).slice(0, 8);
+            
+            const suggestionsContainer = document.querySelector('.suggestion-cards');
+            suggestionsContainer.innerHTML = '';
+
+            randomTrades.forEach(trade => {
+                const card = document.createElement('div');
+                card.className = 'suggestion-card';
+                card.innerHTML = `
+                    <h3>${trade.skillName}</h3>
+                    <p class="description">${trade.description}</p>
+                    <p>${trade.experience} years of experience</p>
+                    <p>₹${trade.hourlyRate} / hour</p>
+                `;
+                
+                card.addEventListener('click', () => {
+                    window.location.href = `/new-page?sname=${encodeURIComponent(trade.skillName)}&description=${encodeURIComponent(trade.description)}&name=${encodeURIComponent(trade.name)}&experience=${encodeURIComponent(trade.experience)}&hourlyRate=${encodeURIComponent(trade.hourlyRate)}&contactEmail=${encodeURIComponent(trade.contactEmail)}&socialMedia=${encodeURIComponent(trade.socialMedia)}&upiID=${encodeURIComponent(trade.upiID)}&uid=${encodeURIComponent(trade.uid)}&category=${encodeURIComponent(trade.category)}`;
+                });
+
+                suggestionsContainer.appendChild(card);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+    </script>
 
 
     <script>
-        const slider = document.getElementById('slider');
-        const slides = document.querySelectorAll('.slide');
-        const dotsContainer = document.getElementById('dots');
-    
-        let currentIndex = 0;
-    
-        // Create Dots
-        slides.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.classList.add('dot');
-            if (index === 0) dot.classList.add('active');
-            dot.setAttribute('data-index', index);
-            dotsContainer.appendChild(dot);
+        addmin.style.display = 'none';
+        // slider 
+       const slider = document.getElementById('slider');
+const slides = document.querySelectorAll('.slide');
+const dotsContainer = document.getElementById('dots');
+
+let currentIndex = 0;
+
+// Create Dots dynamically based on slides
+slides.forEach((_, index) => {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
+    if (index === 0) dot.classList.add('active');
+    dot.setAttribute('data-index', index);
+    dotsContainer.appendChild(dot);
+});
+
+const dots = document.querySelectorAll('.dot');
+
+// Update slider and dots
+function updateSlider() {
+    slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+    dots.forEach(dot => dot.classList.remove('active'));
+    dots[currentIndex].classList.add('active');
+}
+
+// Next slide function
+function nextSlide() {
+    currentIndex = (currentIndex + 1) % slides.length;
+    updateSlider();
+}
+
+// Previous slide function
+function prevSlide() {
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    updateSlider();
+}
+
+// Dot navigation
+dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+        currentIndex = parseInt(dot.getAttribute('data-index'));
+        updateSlider();
+    });
+});
+let userIdd = '';
+// Auto Slide on page load
+window.onload = () => {
+    setInterval(nextSlide, 5000); // Change slide every 5 seconds
+
+
+    async function checkSignedIn() {
+      try {
+        const response = await fetch('http://localhost:3001/check-signed-in', {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
         });
-    
-        const dots = document.querySelectorAll('.dot');
-    
-        function updateSlider() {
-            slider.style.transform = `translateX(-${currentIndex * 100}%)`;
-            dots.forEach(dot => dot.classList.remove('active'));
-            dots[currentIndex].classList.add('active');
+
+        if (!response.ok) {
+          throw new Error('User not signed in.');
         }
-    
-        function nextSlide() {
-            currentIndex = (currentIndex + 1) % slides.length;
-            updateSlider();
+
+        const data = await response.json();
+        
+        var userDataa = JSON.stringify(data.user, null, 2);
+        console.log(data.user.uid);
+        userIdd = data.user.uid;
+        fetchUserData(userIdd); 
+       
+
+
+      } catch (error) {
+       console.log("User Not Signed In");
+       window.location.href = '/';
+      }
+    }
+
+     checkSignedIn();
+
+
+     async function fetchUserData(uid) {
+    try {
+      // Replace 'http://localhost:3001' with your actual backend URL if hosted elsewhere
+      const response = await fetch(`http://localhost:3001/user/${uid}`);
+      
+      if (response.ok) {
+        const userData = await response.json();
+
+        console.log(userData);
+        
+        // Populate the profile fields with user data
+        //document.getElementById('fullName').value = userData.name;
+        if(userData.admin == 'yes') {
+            addmin.style.display = 'flex';
+            window.location.href = '/admin'; // Redirect to admin panel
+        } else {
+            addmin.style.display = 'none';
         }
-    
-        function prevSlide() {
-            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-            updateSlider();
-        }
-    
-        // Dot Navigation
-        dots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                currentIndex = parseInt(dot.getAttribute('data-index'));
-                updateSlider();
-            });
-        });
-    
-        // Ensure the DOM is ready before starting the interval
-        window.onload = () => {
-            // Auto Slide
-            setInterval(nextSlide, 5000); // Change slide every 5 seconds
-        };
+        
+
+       
+
+      } else {
+        console.error('Failed to fetch user data:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error.message);
+    }
+  }
+
+    const suggestionsContainer = document.querySelector('.suggestion-cards');
+
+       // Dynamically fetch and display trades
+       
+
+
+
+};
+
     </script>
     
 </body>

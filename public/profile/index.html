@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+        radial-gradient(circle at top right, #4b0082, transparent 60%),
+        #000033;
+    color: white;
+}
+
+/* Header */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+   
+}
+
+header .logo img {
+    width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            width: 150px; /* Adjust the size of the logo */
+            height: auto; /* Keep aspect ratio */
+            border-radius: 10px; /* Optional: adds rounded corners to the image */
+            transition: transform 0.3s ease-in-out; /* Adds smooth hover effect */
+            padding: 20px;
+}
+
+header h1 {
+    font-size: 1.8em;
+    color: #fff;
+    margin: 0;
+}
+
+/* Profile Container */
+.profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #1a1a3d;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Profile Card */
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.profile-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #4b0082;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.field-label {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #ccc;
+}
+
+.field-value {
+    font-size: 1em;
+    color: #fff;
+    text-align: right;
+    flex-grow: 1;
+    margin-left: 15px;
+}
+
+.field-label2 {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #ccc;
+}
+
+.field-value2 {
+    font-size: 1em;
+    color: #fff;
+    text-align: right;
+    flex-grow: 1;
+    margin-left: 15px;
+}
+.profile-field2 {
+    display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background-color: #7f00ff;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            text-decoration: none; /* Removes underline from the anchor */
+            color: white; /* Makes the text white */
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: fit-content; /* Ensures the anchor fits its content */
+            margin: auto; /* Centers the button horizontally */
+}
+.field-value a {
+    color: #ccc;
+    text-decoration: none;
+}
+
+.field-value a:hover {
+    text-decoration: underline;
+}
+
+/* Edit Icon */
+.edit-icon {
+    font-size: 1.2em;
+    color: #7f00ff;
+    cursor: pointer;
+    margin-left: 15px;
+    transition: color 0.3s ease;
+}
+
+.edit-icon:hover {
+    color: #ff9900;
+}
+
+.editicon {
+            
+  width: 19px; /* Set the desired width */
+  height: auto; /* Maintain aspect ratio */
+  filter: brightness(0) invert(1); /* Change the color to white */
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Add smooth transition effects */
+}
+
+.profile-field2 {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    background-color: #7f00ff; /* Button background color */
+    color: #fff; /* Button text color */
+    border-radius: 5px;
+    text-align: center;
+}
+
+.profile-field2:hover {
+    background-color: #4b0082; /* Hover effect */
+}
+
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <img src="/images/logo.png" alt="Logo">
+        </div>
+        <br>
+      
+    </header>
+
+    <!-- Profile Card -->
+    <center><h1>My Profile</h1></center>
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-field">
+                <span class="field-label">Full Name:</span>
+                <span class="field-value" id="name"></span>
+            </div>
+            <div class="profile-field">
+                <span class="field-label">Email:</span>
+                <span class="field-value" id="email"></span>
+            </div>
+            <div class="profile-field">
+                <span class="field-label">Phone Number:</span>
+                <span class="field-value" id="phone"></span>
+            </div>
+            <div class="profile-field">
+                <span class="field-label">Biography:</span>
+                <span class="field-value" id="bio"></span>
+            </div>
+
+         <div class="profile-field">
+                <span class="field-label">College/school:</span>
+                <span class="field-value" id="college"></span>
+            </div>
+            
+
+            <div class="profile-field">
+                <span class="field-label">Instagram:</span>
+                <span class="field-value">
+                    <a id="socialMedia" href="https://instagram.com/yourhandle" target="_blank">Open Social Media</a>
+                </span>
+            </div>
+            <div class="profile-field">
+                <span class="field-label">Website:</span>
+                <span class="field-value">
+                    <a id="website" href="https://yourwebsite.com" target="_blank">Open Website</a>
+                </span>
+            </div>
+
+            <div class="profile-field">
+                <span class="field-label">UPI:</span>
+                <span class="field-value" id="upi">yourname@upi</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="/profilemanage" class="profile-field2">
+                    <span class="field-label2">Edit Profile</span>
+                </a>
+                <a href="/home" class="profile-field2" onclick="signOut()">
+                    <span class="field-label2" >Sign Out</span>
+                </a>
+            </div>
+        
+
+        </div>
+    </div>
+
+
+
+    <script> 
+    async function signOut() {
+        // Show confirmation dialog
+        const confirmSignOut = confirm("Are you sure you want to sign out?");
+        
+        // If user clicks "Cancel", return without doing anything
+        if (!confirmSignOut) {
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3001/sign-out', {
+                method: 'POST',
+                credentials: 'include', // Include cookies in the request
+            });
+
+            if (response.ok) {
+                document.getElementById('status').innerText = 'User signed out successfully.';
+                document.getElementById('user-info').innerText = '';
+                window.location.href = '/'; // Redirect to home page after sign out
+            } else {
+                throw new Error('Failed to sign out.');
+            }
+        } catch (error) {
+            document.getElementById('status').innerText = error.message;
+        }
+    }
+
+
+
+
+  // Function to fetch user data and display it
+  async function fetchUserData(uid) {
+    try {
+      // Replace 'http://localhost:3001' with your actual backend URL if hosted elsewhere
+      const response = await fetch(`http://localhost:3001/user/${uid}`);
+      
+      if (response.ok) {
+        const userData = await response.json();
+
+        console.log(userData);
+        
+        // Populate the profile fields with user data
+        document.getElementById('name').innerText = userData.name;
+        document.getElementById('email').innerText = userData.email;
+        document.getElementById('phone').innerText = userData.phoneNumber;
+        document.getElementById('bio').innerText = userData.biography;
+        document.getElementById('college').innerText = userData.college;
+        document.getElementById('upi').innerText = userData.upiID;
+        document.getElementById('website').href = userData.website;
+        document.getElementById('socialMedia').href = userData.socialMedia;
+
+       
+
+      } else {
+        console.error('Failed to fetch user data:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error.message);
+    }
+  }
+
+
+  let userIdd = '';
+
+
+async function checkSignedIn() {
+      try {
+        const response = await fetch('http://localhost:3001/check-signed-in', {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        });
+
+        if (!response.ok) {
+          throw new Error('User not signed in.');
+        }
+
+        const data = await response.json();
+        
+        var userDataa = JSON.stringify(data.user, null, 2);
+        console.log(data.user.uid);
+        userIdd = data.user.uid;
+        fetchUserData(userIdd); 
+       
+
+
+      } catch (error) {
+       console.log("User Not Signed In");
+      }
+    }
+
+     checkSignedIn();
+
+  // Call the function with a sample user ID
+ // Replace 'sampleUserID' with the actual user ID
+
+      </script>
+</body>
+</html>

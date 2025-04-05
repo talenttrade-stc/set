@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page 2</title>
+</head>
+<body>
+  <h1>Welcome to Page 2</h1>
+  <p>The value passed from Page 1 is: <span id="passedValue"></span></p>
+  <a href="/">Back to Page 1</a>
+
+  <script>
+    // Extract the value from the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const passedValue = urlParams.get('value');
+    
+    // Display the passed value
+    document.getElementById('passedValue').textContent = passedValue;
+  </script>
+</body>
+</html>

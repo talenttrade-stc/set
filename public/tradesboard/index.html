@@ -350,6 +350,7 @@
             cursor: pointer;
             transition: transform 0.3s, background 0.3s;
             width: 150px;
+            color: #ffffff;
         }
 
         .service-box:hover {
@@ -357,10 +358,40 @@
             background: #3a3b5a;
         }
 
+        .menucard {
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center the text vertically */
+            margin: 15px auto;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #3a3b5a;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            height: 200px; /
+        }
 
+        .menucard:hover {
+            background-color: #2a2b4a;
+            transform: translateY(-5px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+       
 
-
-        
+    .suggestion-cards .description {
+      display: -webkit-box;         /* Enables multi-line truncation */
+      
+      -webkit-box-orient: vertical; /* Required for multi-line truncation */
+      overflow: hidden;             /* Hides the overflowing content */
+      text-overflow: ellipsis;      /* Adds ellipsis (...) */
+      line-height: 1.5em;           /* Adjust the line height */
+      max-height: 3em;              /* line-height * number of lines */
+    }
     </style>
 </head>
 <body>
@@ -373,31 +404,29 @@
         </div>
 
 
-        <div class="search-container">
+        <div class="search-container" onclick="window.location.href='/all-trades'">
             <input type="text" id="searchInput" class="search-box" placeholder="Search here...">
         <button class="search-button" onclick="performSearch()">Search    </button>
     
 
             </div>
         <div class="login-container">
-            <button>Inbox</button>
+            <a href="/dispute"> <button>File a Dispute</button> </a>
         </div>
-        <div class="notification">
-            <button>notification</button>
-        </div>
-        <div class="profile">
-            <button>profile</button>
-        </div>
+        
     </header>
-
+    <button onclick="history.back()" style="position: absolute; top: 160px; left: 200px; padding: 10px 20px; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">
+        ← Back
+    </button>
     <!-- Main Banner Section -->
     <section class="slider-container">
      <section class="menu">
         <h2>MENU</h2>
         <div class="menu-list">
-            <div class="menucard">Creative Skills</div>
-            <div class="menucard">Academic Skills</div>
+            <a href="/mytrades" class="menucard">Posted Trades</a>
+            <a href="/posttrade" class="menucard">Post a trade</a>
         </div>
+        
     </section></section></section>
 
 
@@ -405,67 +434,121 @@
 <section class="services">
     <h2>All Skills</h2>
     <div class="service-list">
-        <div class="service-box">Creative Skills</div>
-        <div class="service-box">Academic Skills</div>
-        <div class="service-box">Creative Skills</div>
-        <div class="service-box">Academic Skills</div>
-        <div class="service-box">Technical Skills</div>
-        <div class="service-box">Social and Leadership Skills</div>
+        <div class="service-box" onclick="openPopup('Creative Skills')">Creative Skills</div>
+        <div class="service-box" onclick="openPopup('Academic Skills')">Academic Skills</div>
+        <div class="service-box" onclick="openPopup('Technical Skills')">Technical Skills</div>
+        <div class="service-box" onclick="openPopup('Social and Leadership Skills')">Social and Leadership Skills</div>
+        <div class="service-box" onclick="openPopup('Physical and Performance Skills')">Physical and Performance Skills</div>
+        <div class="service-box" onclick="openPopup('Personal Development Skills')">Personal Development Skills</div>
     </div>
+
+    <!-- Popup Window -->
+    <div id="skillPopup" class="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+        background: linear-gradient(135deg, rgba(26, 27, 46, 0.97), rgba(42, 43, 74, 0.97));
+        padding: 40px; border-radius: 20px; z-index: 1000; width: 85%; max-width: 1300px;
+        max-height: 85vh; overflow-y: auto; box-shadow: 0 0 30px rgba(0,0,0,0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+        <span onclick="closePopup()" style="position: absolute; right: 25px; top: 25px; cursor: pointer; 
+            font-size: 28px; color: #ffd700; transition: color 0.3s;">&times;</span>
+        <h2 id="popupTitle" style="color: #ffd700; text-align: center; margin-bottom: 35px; 
+            font-size: 2.2em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"></h2>
+        <div id="skillCards" class="suggestion-cards" style="display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 35px; padding: 20px;"></div>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 999;"></div>
+</section>
+
+<script>
+function openPopup(category) {
+    document.getElementById('overlay').style.display = 'block';
+    const popup = document.getElementById('skillPopup');
+    popup.style.display = 'block';
+    popup.style.opacity = '0';
+    document.getElementById('popupTitle').textContent = category;
+    
+    // Fade in animation
+    setTimeout(() => {
+        popup.style.transition = 'opacity 0.3s ease';
+        popup.style.opacity = '1';
+    }, 10);
+    
+    fetch('/get-trades')
+        .then(response => response.json())
+        .then(trades => {
+            // Filter by category and verification
+            const filteredTrades = trades.filter(trade => 
+                trade.category === category && 
+                (trade.verification === "yes" || trade.verification === true)
+            );
+
+            const skillCards = document.getElementById('skillCards');
+            skillCards.innerHTML = '';
+
+            if (filteredTrades.length === 0) {
+                skillCards.innerHTML = '<p class="no-trades-message">No verified trades available in this category.</p>';
+                return;
+            }
+
+            filteredTrades.forEach((trade, index) => {
+                const card = document.createElement('div');
+                card.className = 'suggestion-card';
+                card.style.animation = `fadeIn 0.5s ease forwards ${index * 0.1}s`;
+                card.style.opacity = '0';
+                card.innerHTML = `
+                    <h3>${trade.skillName}</h3>
+                    <p class="description">${trade.description}</p>
+                    <p>${trade.experience} years of experience</p>
+                    <p style="color: #ffd700; font-weight: bold;">₹${trade.hourlyRate} / hour</p>
+                `;
+
+                card.addEventListener('click', () => {
+                    window.location.href = `/new-page?name=${encodeURIComponent(trade.name)}&sname=${encodeURIComponent(trade.skillName)}&description=${encodeURIComponent(trade.description)}&experience=${encodeURIComponent(trade.experience)}&hourlyRate=${encodeURIComponent(trade.hourlyRate)}&contactEmail=${encodeURIComponent(trade.contactEmail)}&socialMedia=${encodeURIComponent(trade.socialMedia)}&upiID=${encodeURIComponent(trade.upiID)}&uid=${encodeURIComponent(trade.uid)}&category=${encodeURIComponent(trade.category)}`;
+                });
+
+                skillCards.appendChild(card);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function closePopup() {
+    const popup = document.getElementById('skillPopup');
+    const overlay = document.getElementById('overlay');
+    
+    // Fade out animation
+    popup.style.opacity = '0';
+    overlay.style.opacity = '0';
+    
+    setTimeout(() => {
+        popup.style.display = 'none';
+        overlay.style.display = 'none';
+        overlay.style.opacity = '1';
+    }, 300);
+}
+
+document.getElementById('overlay').addEventListener('click', closePopup);
+
+// Add fade in animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+`;
+document.head.appendChild(style);
+</script>
 </section>
 
     <!-- Suggestions Section -->
     <section class="suggestions">
-        <h2>Talents</h2>
+       
         <div class="suggestion-cards">
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
-            <div class="suggestion-card">
-                <h3>Kevin M</h3>
-                <p>I will create minimalist and luxury logo design for your business</p>
-                <span>4.9 (245+)</span>
-                <p>From ₹2,250</p>
-            </div>
+            <!-- Cards will be dynamically inserted here -->
         </div>
     </section>
 
@@ -473,53 +556,129 @@
 
 
 
-    <script>
-        const slider = document.getElementById('slider');
-        const slides = document.querySelectorAll('.slide');
-        const dotsContainer = document.getElementById('dots');
-    
-        let currentIndex = 0;
-    
-        // Create Dots
-        slides.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.classList.add('dot');
-            if (index === 0) dot.classList.add('active');
-            dot.setAttribute('data-index', index);
-            dotsContainer.appendChild(dot);
+<script>
+    let userIdd = '';
+    window.onload = () => {
+
+
+    async function checkSignedIn() {
+      try {
+        const response = await fetch('http://localhost:3001/check-signed-in', {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
         });
-    
-        const dots = document.querySelectorAll('.dot');
-    
-        function updateSlider() {
-            slider.style.transform = `translateX(-${currentIndex * 100}%)`;
-            dots.forEach(dot => dot.classList.remove('active'));
-            dots[currentIndex].classList.add('active');
+
+        if (!response.ok) {
+          throw new Error('User not signed in.');
         }
+
+        const data = await response.json();
+        
+        var userDataa = JSON.stringify(data.user, null, 2);
+        console.log(data.user.uid);
+        userIdd = data.user.uid;
+       
+
+
+      } catch (error) {
+       console.log("User Not Signed In");
+       window.location.href = '/';
+      }
+    }
+
+     checkSignedIn();
+
+    const suggestionsContainer = document.querySelector('.suggestion-cards');
+
+    // Dynamically fetch and display trades
+    fetch('/get-trades')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to fetch trades.');
+    }
+    return response.json();
+  })
+  .then(trades => {
+    const suggestionsContainer = document.querySelector('.suggestion-cards');
     
-        function nextSlide() {
-            currentIndex = (currentIndex + 1) % slides.length;
-            updateSlider();
-        }
-    
-        function prevSlide() {
-            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-            updateSlider();
-        }
-    
-        // Dot Navigation
-        dots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                currentIndex = parseInt(dot.getAttribute('data-index'));
-                updateSlider();
-            });
-        });
-    
-        // Ensure the DOM is ready before starting the interval
-        window.onload = () => {
-            // Auto Slide
-            setInterval(nextSlide, 5000); // Change slide every 5 seconds
-        };
+    // Filter trades where dataVerification is "yes" or true
+    const verifiedTrades = trades.filter(trade => trade.verification === "yes" || trade.verification === true);
+
+    if (verifiedTrades.length === 0) {
+      // Display a message if no verified trades are found
+      suggestionsContainer.innerHTML = '<p class="no-trades-message">No verified trades available at the moment.</p>';
+      return;
+    }
+
+    // Render only verified trades
+    verifiedTrades.forEach(trade => {
+      const card = document.createElement('div');
+      card.className = 'suggestion-card';
+      card.setAttribute('data-id', trade.uid); // Add unique ID
+
+      card.innerHTML = `
+        <h3>${trade.skillName}</h3>
+        <p class="description">${trade.description}</p>
+        <p>${trade.experience} years of experience</p>
+        <p>₹${trade.hourlyRate} / hour</p>
+      `;
+
+      // Attach click event to navigate to the details page
+      card.addEventListener('click', () => {
+        window.location.href = `/new-page?name=${encodeURIComponent(trade.skillName)}&description=${encodeURIComponent(trade.description)}&experience=${encodeURIComponent(trade.experience)}&hourlyRate=${encodeURIComponent(trade.hourlyRate)}&contactEmail=${encodeURIComponent(trade.contactEmail)}&socialMedia=${encodeURIComponent(trade.socialMedia)}&upiID=${encodeURIComponent(trade.upiID)}&uid=${encodeURIComponent(trade.uid)}&category=${encodeURIComponent(trade.category)}`;
+      });
+
+      suggestionsContainer.appendChild(card);
+    });
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    const suggestionsContainer = document.querySelector('.suggestion-cards');
+    suggestionsContainer.innerHTML = `<p class="error-message">Error loading trades: ${error.message}</p>`;
+  });
+
+
+
+};
+
+// Add a "See All Trades" button below the suggestions section
+const suggestionsSection = document.querySelector('.suggestions');
+const seeAllButton = document.createElement('div');
+seeAllButton.style.cssText = `
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+`;
+
+const buttonLink = document.createElement('a');
+buttonLink.href = '/all-trades';
+buttonLink.innerHTML = `
+    <button style="
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: white;
+        padding: 12px 30px;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    ">See All Trades</button>
+`;
+
+buttonLink.querySelector('button').addEventListener('mouseover', function() {
+    this.style.background = 'linear-gradient(to right, #2575fc, #6a11cb)';
+    this.style.transform = 'scale(1.05)';
+});
+
+buttonLink.querySelector('button').addEventListener('mouseout', function() {
+    this.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
+    this.style.transform = 'scale(1)';
+});
+
+seeAllButton.appendChild(buttonLink);
+suggestionsSection.appendChild(seeAllButton);
     </script>
     
 </body>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Profile</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+              radial-gradient(circle at top right, #4b0082, transparent 60%),
+              #000033;
+            color: white;
+        }
+
+        /* Header Section */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            width: 150px; 
+            height: auto; 
+            border-radius: 10px; 
+            transition: transform 0.3s ease-in-out; 
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: radial-gradient(circle at bottom left, #4b0082, transparent 60%),
+              radial-gradient(circle at top right, #4b0082, transparent 60%),
+              #000033;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: #ccc;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0;
+            border: 1px solid #4b0082;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #1a1a3d;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        textarea:focus {
+            border-color: #7f00ff;
+            box-shadow: 0 0 8px rgba(127, 0, 255, 0.8);
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #7f00ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <img src="/images/logo.png" alt="Logo" class="logo">
+        </div>
+    </header>
+
+    <div class="form-container">
+        <h2>Update Your Profile</h2>
+        <form id="profileForm">
+            <!-- Full Name -->
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" placeholder="e.g., John Doe" required>
+            </div>
+
+            <!-- Email Address -->
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="e.g., john.doe@example.com" required>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="e.g., +91 9876543210" required>
+            </div>
+
+           
+            <!-- Biography -->
+            <div class="form-group">
+                <label for="biography">Biography</label>
+                <textarea id="biography" name="biography" rows="5" placeholder="Write a short bio about yourself..." required></textarea>
+            </div>
+
+            <!-- Social Media Links -->
+            <div class="form-group">
+                <label for="socialMedia">Social Media Links</label>
+                <textarea id="socialMedia" name="socialMedia" rows="3" placeholder="Provide links to your social media profiles"></textarea>
+            </div>
+
+            <!-- Website Link -->
+            <div class="form-group">
+                <label for="website">Website</label>
+                <input type="text" id="website" name="website" placeholder="e.g., https://yourwebsite.com">
+            </div>
+
+            <!-- UPI Payment ID -->
+            <div class="form-group">
+                <label for="upiID">UPI Payment ID</label>
+                <input type="text" id="upiID" name="upiID" placeholder="e.g., yourname@upi">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">Create Profile</button>
+        </form>
+    </div>
+
+    <script>
+
+let userIdd = '';
+
+
+async function checkSignedIn() {
+      try {
+        const response = await fetch('http://localhost:3001/check-signed-in', {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        });
+
+        if (!response.ok) {
+          throw new Error('User not signed in.');
+        }
+
+        const data = await response.json();
+        
+        var userDataa = JSON.stringify(data.user, null, 2);
+        console.log(data.user.uid);
+        userIdd = data.user.uid;
+       
+
+
+      } catch (error) {
+       console.log("User Not Signed In");
+      }
+    }
+
+     checkSignedIn();
+        const profileForm = document.getElementById('profileForm');
+
+        profileForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(profileForm);
+            const profileData = {
+                fullName: formData.get('fullName'),
+                email: formData.get('email'),
+                phoneNumber: formData.get('phoneNumber'),
+                biography: formData.get('biography'),
+                socialMedia: formData.get('socialMedia'),
+                website: formData.get('website'),
+                upiID: formData.get('upiID'),
+                uidd:userIdd
+            };
+
+            try {
+                const response = await fetch('http://localhost:3001/create-profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(profileData),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert('Profile created successfully!');
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to create profile: ${errorData.message}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            }
+
+            profileForm.reset();
+        });
+    </script>
+</body>
+</html>
