@@ -89,4 +89,46 @@ This project is licensed under the MIT License - see `LICENSE` for details.
 - Issues: [GitHub Issues](https://github.com/yourusername/talent-trade/issues)
 
 ---
-Made with ❤️ by the Talent Trade Team
+# 🌌 Talent Trade – Team Nexus
+
+<div align="center">
+  
+✨ **The minds redefining skill exchange**  
+*A constellation of final-year innovators*
+
+</div>
+
+---
+
+## 🪐 Team Matrix
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/insanebwoi">
+        <img src="https://github.com/insanebwoi.png" width="120px;" alt=""/><br />
+        <sub><b>Muhammed Ihsan M K</b></sub><br />
+        <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=00D4FF&width=120&lines=Code+Alchemist" alt="Typing effect">
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Paulasebastian">
+        <img src="https://github.com/Paulasebastian.png" width="120px;" alt=""/><br />
+        <sub><b>Paul A Sebastian</b></sub><br />
+        <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=FF6EC7&width=120&lines=Digital+Architect" alt="Typing effect">
+      </a>
+    </td>
+    <td align="center">
+      <img src="https://ui-avatars.com/api/?name=Anand+B&background=0D8ABC&color=fff&bold=true&size=120" width="120px;" alt=""/><br />
+      <sub><b>Anand B</b></sub><br />
+      <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=0D8ABC&width=120&lines=System+Artisan" alt="Typing effect">
+    </td>
+    <td align="center">
+      <img src="https://ui-avatars.com/api/?name=Suryadev+K&background=8A2BE2&color=fff&bold=true&size=120" width="120px;" alt=""/><br />
+      <sub><b>Suryadev K</b></sub><br />
+      <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=8A2BE2&width=120&lines=Interface+Shaman" alt="Typing effect">
+    </td>
+  </tr>
+</table>
+
+---
